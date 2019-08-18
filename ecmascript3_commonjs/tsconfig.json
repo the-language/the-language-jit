@@ -6,6 +6,7 @@
         "target": "ES3",
         "noImplicitUseStrict": true,
         "alwaysStrict": false,
+        "incremental": true,
 
         "strict": true,
     },

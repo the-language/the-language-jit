@@ -1,5 +1,11 @@
-all: ecmascript3_commonjs/lang.js
+ALL = ecmascript3_commonjs/lang.js
+
+all: $(ALL)
 .PHONY: all
+
+clean:
+	rm $(ALL)
+.PHONY: clean
 
 typescript/node_modules: typescript/yarn.lock
 	cd typescript && yarn
