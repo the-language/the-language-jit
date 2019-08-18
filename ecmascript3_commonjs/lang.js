@@ -409,15 +409,26 @@ function force_all_ignore_comment(x) {
         xs.push(x);
     }
 }
-function force_all_delay_inner(comments, x, k) {
+function force1(x) {
+    x = un_just_all(x);
+    if (delay_p(x)) {
+        return delay_exec_1(x);
+    }
+    return x;
+}
+function force_all_delay_inner(comments, x, dis, k) {
+    x = force1(x);
     while (comment_p(x)) {
         comments.push(x);
-        x = comment_x(x);
+        x = un_just_all(comment_x(x));
     }
     if (delay_p(x)) {
-        throw 'WIP';
+        return new_delay_wait(x, function (x) { return force_all_delay_inner(comments, x, dis, k); }, dis);
     }
-    throw 'WIP';
+    return k(comments, x);
+}
+function force_all_delay(x, dis, k) {
+    return force_all_delay_inner([], x, dis, k);
 }
 function make_enviroment_null_v() {
     return [true, {}, null];
@@ -752,13 +763,18 @@ function equal_p(x, y) {
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
+function evaluate_with_environment(env, x) {
+    throw 'WIP';
+}
 function real_evaluate_with_environment(env, x) {
-    if (null_p(x)) {
-        return null_v;
-    }
-    else {
-        throw 'WIP';
-    }
+    return force_all_delay(x, function () { return evaluate_with_environment(env, x); }, function (comments, x) {
+        if (null_p(x)) {
+            return null_v;
+        }
+        else {
+            throw 'WIP';
+        }
+    });
 }
 /*
     The Language

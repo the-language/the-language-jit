@@ -19,31 +19,31 @@
 
 type ThisLang = string
 
-function reduce_comma(xs:Array<string>):string{
-    if(xs.length===0){return ""}
-    let result=xs[0]
-    for(let i=1;i<xs.length;i++){
-        result=`${result},${xs[i]}`
+function reduce_comma(xs: Array<string>): string {
+    if (xs.length === 0) { return "" }
+    let result = xs[0]
+    for (let i = 1; i < xs.length; i++) {
+        result = `${result},${xs[i]}`
     }
     return result
 }
 
-function thislang_eval_statements(statements: ThisLang):any{
+function thislang_eval_statements(statements: ThisLang): any {
     return Function(`"use strict";${statements}`)()
 }
-function thislang_eval_expression(expression: ThisLang):any{
+function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_return(expression))
 }
 
-function thislang_array(xs:Array<ThisLang>):ThisLang{
+function thislang_array(xs: Array<ThisLang>): ThisLang {
     return `[${reduce_comma(xs)}]`
 }
-function thislang_call(f:ThisLang, args:Array<ThisLang>):ThisLang{
+function thislang_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
     return `${f}(${reduce_comma(args)})`
 }
-function thislang_lambda(args:Array<ThisLang>, statements:ThisLang):ThisLang{
+function thislang_lambda(args: Array<ThisLang>, statements: ThisLang): ThisLang {
     return `function(${reduce_comma(args)}){${statements}}`
 }
-function thislang_return(val:ThisLang):ThisLang{
+function thislang_return(val: ThisLang): ThisLang {
     return `return ${val};`
 }

@@ -17,11 +17,18 @@
 
 */
 
-function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
+function evaluate_with_environment(env: Env, x: LangVal): LangVal {
+    throw 'WIP'
+}
 
-    if(null_p(x)){
-        return null_v
-    }else{
-        throw 'WIP'
-    }
+function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
+    return force_all_delay(x,
+        () => evaluate_with_environment(env, x),
+        (comments, x) => {
+            if (null_p(x)) {
+                return null_v
+            } else {
+                throw 'WIP'
+            }
+        })
 }

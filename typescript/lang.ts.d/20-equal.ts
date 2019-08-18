@@ -17,7 +17,7 @@
 
 */
 
-function jsbool_isomorphism_equal_p_inner(forcer: (x:LangVal)=>LangVal, x: LangVal, y: LangVal): boolean {
+function jsbool_isomorphism_equal_p_inner(forcer: (x: LangVal) => LangVal, x: LangVal, y: LangVal): boolean {
     if (x === y) {
         return true
     }
@@ -27,7 +27,7 @@ function jsbool_isomorphism_equal_p_inner(forcer: (x:LangVal)=>LangVal, x: LangV
         return true
     }
     function end_2<T extends LangVal>(xx: T, yy: T, f1: (x: T) => LangVal, f2: (x: T) => LangVal): boolean {
-        if (jsbool_isomorphism_equal_p_inner(forcer, f1(xx), f1(yy)) && jsbool_isomorphism_equal_p_inner(forcer,f2(xx), f2(yy))) {
+        if (jsbool_isomorphism_equal_p_inner(forcer, f1(xx), f1(yy)) && jsbool_isomorphism_equal_p_inner(forcer, f2(xx), f2(yy))) {
             lang_assert_equal_set_do(xx, yy)
             return true
         } else {

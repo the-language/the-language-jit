@@ -46,7 +46,7 @@ function simple_print(x: LangVal): string {
     } else if (comment_p(x)) {
         return ";(" + simple_print(comment_comment(x)) + " " + simple_print(comment_x(x)) + ")"
     } else if (delay_p(x)) {
-        return "$(" +simple_print(delay_display(x)) + ")"
+        return "$(" + simple_print(delay_display(x)) + ")"
     }
     return LANG_ERROR() // 大量重複代碼 simple_print <-> complex_print ]]]
 }
@@ -542,7 +542,7 @@ function complex_print(val: LangVal): string {
     } else if (comment_p(x)) {
         return ";(" + complex_print(comment_comment(x)) + " " + complex_print(comment_x(x)) + ")"
     } else if (delay_p(x)) {
-        return "$(" +simple_print(delay_display(x)) + ")"
+        return "$(" + simple_print(delay_display(x)) + ")"
     }
     return LANG_ERROR() // 大量重複代碼 simple_print <-> complex_print ]]]
 }
