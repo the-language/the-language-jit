@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "typescript": "^3.5.3"
+  },
+  "name": "the-language-jit",
+  "version": "0.0.0",
+  "description": "TheLanguage JIT",
+  "main": "lang.js",
+  "repository": "https://gitlab.com/the-language/the-language-jit",
+  "author": "zaoqi <zaomir@outlook.com>",
+  "license": "AGPL-3.0-or-later"
+}
