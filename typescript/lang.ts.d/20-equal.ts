@@ -62,5 +62,5 @@ function jsbool_no_force_isomorphism_p(x: LangVal, y: LangVal): boolean {
     return jsbool_isomorphism_equal_p_inner(un_just_all, x, y)
 }
 function equal_p(x: LangVal, y: LangVal): boolean {
-    return jsbool_isomorphism_equal_p_inner(force_all, x, y)
+    return jsbool_isomorphism_equal_p_inner(force_all_ignore_comment, x, y)
 }

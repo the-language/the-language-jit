@@ -17,6 +17,11 @@
 
 */
 
-function real_evaluate_with_enviromen(env: Env, x: LangVal): LangVal {
-    throw 'WIP'
+function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
+
+    if(null_p(x)){
+        return null_v
+    }else{
+        throw 'WIP'
+    }
 }

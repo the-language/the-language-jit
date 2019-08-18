@@ -38,7 +38,7 @@ function enviroment_null_p(x: Enviroment): x is EnviromentNull {
     return false
 }
 function enviroment_helper_print0(x: LangVal, refe: Array<LangVal>, ret: Array<string>): void {
-    x = force_all(x)
+    x = force_all_ignore_comment(x)
     if (atom_p(x)) {
         ret.push("^", un_atom(x))
     } else if (construction_p(x)) {
@@ -201,42 +201,42 @@ function env_foreach(env: Env, f: (k: LangVal, v: LangVal) => void): void {
 }
 
 function val2env(x: LangVal): OrFalse<Env> {
-    x = force_all(x)
+    x = force_all_ignore_comment(x)
     if (!data_p(x)) {
         return false
     }
-    let s: LangVal = force_all(data_name(x))
+    let s: LangVal = force_all_ignore_comment(data_name(x))
     if (!atom_p(s)) {
         return false
     }
     if (!atom_equal_p(s, mapping_atom)) {
         return false
     }
-    s = force_all(data_list(x))
+    s = force_all_ignore_comment(data_list(x))
     if (!construction_p(s)) {
         return false
     }
-    if (!null_p(force_all(construction_tail(s)))) {
+    if (!null_p(force_all_ignore_comment(construction_tail(s)))) {
         return false
     }
     let ret: Env = []
-    let xs: LangVal = force_all(construction_head(s))
+    let xs: LangVal = force_all_ignore_comment(construction_head(s))
     while (!null_p(xs)) {
         if (!construction_p(xs)) {
             return false
         }
-        let x = force_all(construction_head(xs))
-        xs = force_all(construction_tail(xs))
+        let x = force_all_ignore_comment(construction_head(xs))
+        xs = force_all_ignore_comment(construction_tail(xs))
         if (!construction_p(x)) {
             return false
         }
         const k = construction_head(x)
-        x = force_all(construction_tail(x))
+        x = force_all_ignore_comment(construction_tail(x))
         if (!construction_p(x)) {
             return false
         }
         const v = construction_head(x)
-        if (!null_p(force_all(construction_tail(x)))) {
+        if (!null_p(force_all_ignore_comment(construction_tail(x)))) {
             return false
         }
         let not_breaked: boolean = true

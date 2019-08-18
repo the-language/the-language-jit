@@ -160,24 +160,54 @@ function delay_p(x) {
     return x[0] === delay_t;
 }
 exports.delay_p = delay_p;
-function new_delay(exec, dis) {
-    return [delay_t, exec, dis];
+// Normal: exec為化簡，dis為不化簡。
+function new_delay_normal(exec, dis) {
+    return [delay_t, 0 /* normal_t */, [exec, dis]];
 }
-exports.new_delay = new_delay;
+exports.new_delay_normal = new_delay_normal;
+function new_delay_wait(x, next, dis) {
+    return [delay_t, 1 /* wait_t */, [x, next, dis]];
+}
+exports.new_delay_wait = new_delay_wait;
 function evaluate(x) {
-    return new_delay((function () { return real_evaluate_with_enviromen(env_null_v, x); }), (function () { return x; }));
+    return new_delay_normal((function () { return real_evaluate_with_environment(env_null_v, x); }), (function () { return x; }));
 }
-function delay_exec(x) {
-    var r = x[1]();
-    x[2] = function () { return r; };
-    lang_assert_equal_set_do(x, r);
-    return r;
+function delay_exec_1(x) {
+    if (x[1] === 1 /* wait_t */) {
+        var vs = x[2];
+        var wait = delay_exec_1(vs[0]);
+        if (delay_p(wait)) {
+            return x;
+        }
+        else {
+            var n = vs[1](wait);
+            lang_assert_equal_set_do(x, n);
+            return n;
+        }
+    }
+    else {
+        var _t = x[1];
+        var vs = x[2];
+        var r = vs[0]();
+        lang_assert_equal_set_do(x, r);
+        return r;
+    }
 }
-exports.delay_exec = delay_exec;
+exports.delay_exec_1 = delay_exec_1;
 function delay_display(x) {
-    var r = x[2]();
-    x[2] = function () { return r; };
-    return r;
+    if (x[1] === 1 /* wait_t */) {
+        var vs = x[2];
+        var r_1 = vs[2]();
+        vs[2] = function () { return r_1; };
+        return r_1;
+    }
+    else {
+        var _t = x[1];
+        var vs = x[2];
+        var r_2 = vs[1]();
+        vs[1] = function () { return r_2; };
+        return r_2;
+    }
 }
 exports.delay_display = delay_display;
 function new_hole_do() {
@@ -352,27 +382,42 @@ function un_just_all(raw) {
     return x;
 }
 exports.un_just_all = un_just_all;
-function force_all(x) {
+function force_all_ignore_comment(x) {
     var xs = [x];
     while (true) {
         if (comment_p(x)) {
+            for (var _i = 0, xs_2 = xs; _i < xs_2.length; _i++) {
+                var val = xs_2[_i];
+                lang_assert_equal_set_do(val, x);
+            }
             x = comment_x(x);
+            xs = [x];
         }
         else if (delay_p(x)) {
-            x = delay_exec(x);
+            x = delay_exec_1(x);
         }
         else if (just_p(x)) {
             x = un_just(x);
         }
         else {
-            for (var _i = 0, xs_2 = xs; _i < xs_2.length; _i++) {
-                var val = xs_2[_i];
+            for (var _a = 0, xs_3 = xs; _a < xs_3.length; _a++) {
+                var val = xs_3[_a];
                 lang_assert_equal_set_do(val, x);
-                return x;
             }
+            return x;
         }
         xs.push(x);
     }
+}
+function force_all_delay_inner(comments, x, k) {
+    while (comment_p(x)) {
+        comments.push(x);
+        x = comment_x(x);
+    }
+    if (delay_p(x)) {
+        throw 'WIP';
+    }
+    throw 'WIP';
 }
 function make_enviroment_null_v() {
     return [true, {}, null];
@@ -385,7 +430,7 @@ function enviroment_null_p(x) {
     return false;
 }
 function enviroment_helper_print0(x, refe, ret) {
-    x = force_all(x);
+    x = force_all_ignore_comment(x);
     if (atom_p(x)) {
         ret.push("^", un_atom(x));
     }
@@ -407,8 +452,8 @@ function enviroment_helper_print0(x, refe, ret) {
 function enviroment_helper_print_step(xs) {
     var rs = [];
     var ss = [];
-    for (var _i = 0, xs_3 = xs; _i < xs_3.length; _i++) {
-        var x = xs_3[_i];
+    for (var _i = 0, xs_4 = xs; _i < xs_4.length; _i++) {
+        var x = xs_4[_i];
         enviroment_helper_print0(x, rs, ss);
     }
     return [ss, rs];
@@ -554,42 +599,42 @@ function env_foreach(env, f) {
 }
 exports.env_foreach = env_foreach;
 function val2env(x) {
-    x = force_all(x);
+    x = force_all_ignore_comment(x);
     if (!data_p(x)) {
         return false;
     }
-    var s = force_all(data_name(x));
+    var s = force_all_ignore_comment(data_name(x));
     if (!atom_p(s)) {
         return false;
     }
     if (!atom_equal_p(s, mapping_atom)) {
         return false;
     }
-    s = force_all(data_list(x));
+    s = force_all_ignore_comment(data_list(x));
     if (!construction_p(s)) {
         return false;
     }
-    if (!null_p(force_all(construction_tail(s)))) {
+    if (!null_p(force_all_ignore_comment(construction_tail(s)))) {
         return false;
     }
     var ret = [];
-    var xs = force_all(construction_head(s));
+    var xs = force_all_ignore_comment(construction_head(s));
     while (!null_p(xs)) {
         if (!construction_p(xs)) {
             return false;
         }
-        var x_1 = force_all(construction_head(xs));
-        xs = force_all(construction_tail(xs));
+        var x_1 = force_all_ignore_comment(construction_head(xs));
+        xs = force_all_ignore_comment(construction_tail(xs));
         if (!construction_p(x_1)) {
             return false;
         }
         var k = construction_head(x_1);
-        x_1 = force_all(construction_tail(x_1));
+        x_1 = force_all_ignore_comment(construction_tail(x_1));
         if (!construction_p(x_1)) {
             return false;
         }
         var v = construction_head(x_1);
-        if (!null_p(force_all(construction_tail(x_1)))) {
+        if (!null_p(force_all_ignore_comment(construction_tail(x_1)))) {
             return false;
         }
         var not_breaked = true;
@@ -687,7 +732,7 @@ function jsbool_no_force_isomorphism_p(x, y) {
     return jsbool_isomorphism_equal_p_inner(un_just_all, x, y);
 }
 function equal_p(x, y) {
-    return jsbool_isomorphism_equal_p_inner(force_all, x, y);
+    return jsbool_isomorphism_equal_p_inner(force_all_ignore_comment, x, y);
 }
 /*
     The Language
@@ -707,8 +752,13 @@ function equal_p(x, y) {
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
-function real_evaluate_with_enviromen(env, x) {
-    throw 'WIP';
+function real_evaluate_with_environment(env, x) {
+    if (null_p(x)) {
+        return null_v;
+    }
+    else {
+        throw 'WIP';
+    }
 }
 /*
     The Language
@@ -1439,143 +1489,31 @@ function machinetext_print(x) {
     return result;
 }
 exports.machinetext_print = machinetext_print;
-// 相對獨立的部分。machinetext parse/print }}}
-/*
-    The Language
-    Copyright (C) 2018, 2019  Zaoqi <zaomir@outlook.com>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*/
-// WIP
-/*
-// {{{ 相對獨立的部分。Effect
-type Return_Effect_SystemName = SystemName_Make<New_Construction<Sub_Atom, New_Construction<New_Construction<Effect_Atom, New_Construction<New_Construction<TypeAnnotation_Atom, New_Construction<Thing_Atom, New_Construction<Something_Atom, Null_V>>>, Null_V>>, Null_V>>>
-const return_effect_systemName: Return_Effect_SystemName = systemName_make(new_construction(sub_atom, new_construction(new_construction(effect_atom, new_construction(new_construction(typeAnnotation_atom, new_construction(thing_atom, new_construction(something_atom, null_v))), null_v)), null_v)))
-type Bind_Effect_SystemName = SystemName_Make<New_Construction<Sub_Atom, New_Construction<New_Construction<Effect_Atom, New_Construction<Construction_Atom, Null_V>>, Null_V>>>
-const bind_effect_systemName: Bind_Effect_SystemName = systemName_make(new_construction(sub_atom, new_construction(new_construction(effect_atom, new_construction(construction_atom, null_v)), null_v)))
-function new_effect_bind(monad: LangVal, func: LangVal): LangVal {
-    return new_data(bind_effect_systemName, new_list(monad, func))
-}
-function new_effect_return(x: LangVal): LangVal {
-    return new_data(return_effect_systemName, x)
-}
-// 註疏系統WIP
-function run_monad_helper<St, T>(
-    return_handler: (val: LangVal, state: St) => Trampoline<T>,
-    op_handler: (op: LangVal, state: St, resume: (val: LangVal, state: St) => Trampoline<T>) => Trampoline<T>,
-    code: LangVal,
-    state: St,
-    next: OrFalse<LangVal> = false,
-): Trampoline<T> {
-    function make_bind(x: LangVal, f: LangVal): LangVal {
-        throw 'WIP'
+function reduce_comma(xs) {
+    if (xs.length === 0) {
+        return "";
     }
-
-    code = force_all(code)
-    if (data_p(code)) {
-        const name = data_name(code)
-        let list = data_list(code)
-        if (equal_p(name, return_effect_systemName)) {
-            list = force_all(list)
-            if (construction_p(list)) {
-                const list_a = construction_head(list)
-                const list_d = force_all(construction_tail(list))
-                if (null_p(list_d)) {
-                    if (next === false) {
-                        const upval_v = list_a // luaj有BUG，只能這樣寫
-                        const upval_st = state
-                        const r = () => return_handler(upval_v, upval_st)
-                        return trampoline_delay(r)
-                    } else {
-                        const upval_rt = return_handler // luaj有BUG，只能這樣寫
-                        const upval_op = op_handler
-                        const upval_v = list_a
-                        const upval_st = state
-                        const r = () => run_monad_helper(upval_rt, upval_op, apply(next, upval_v), upval_st)
-                        return trampoline_delay(r)
-                    }
-                }
-            }
-        } else if (equal_p(name, bind_effect_systemName)) {
-            list = force_all(list)
-            if (construction_p(list)) {
-                const list_a = construction_head(list)
-                const list_d = force_all(construction_tail(list))
-                if (construction_p(list_d)) {
-                    const list_d_a = construction_head(list_d)
-                    const list_d_d = force_all(construction_tail(list_d))
-                    if (null_p(list_d_d)) {
-                        if (next === false) {
-                            const upval_rt = return_handler // luaj有BUG，只能這樣寫
-                            const upval_op = op_handler
-                            const upval_a = list_a
-                            const upval_b = list_d_a
-                            const upval_st = state
-                            const r = () => run_monad_helper(upval_rt, upval_op, upval_a, upval_st, upval_b)
-                            return trampoline_delay(r)
-                        } else {
-                            const upval_rt = return_handler// luaj有BUG，只能這樣寫
-                            const upval_op = op_handler
-                            const upval_a = list_a
-                            const upval_b = list_d_a
-                            const upval_st = state
-                            const upval_nt = next
-                            const x = new_atom('序甲')
-                            const r = () => run_monad_helper(upval_rt, upval_op, upval_a, upval_st, new_data(function_atom, new_list(new_list(x), make_bind(new_list(make_quote(upval_b), x), make_quote(upval_nt)))))
-                            return trampoline_delay(r)
-                        }
-                    }
-                }
-            }
-        }
+    var result = xs[0];
+    for (var i = 1; i < xs.length; i++) {
+        result = result + "," + xs[i];
     }
-    // op
-    if (next === false) {
-        return trampoline_delay(() => op_handler(code, state, return_handler))
-    } else {
-        return trampoline_delay(() => op_handler(code, state, (val2, state2) => trampoline_delay(() => run_monad_helper(return_handler, op_handler, apply(next, [val2]), state2))))
-    }
+    return result;
 }
-// 註疏系統WIP
-function run_monad_trampoline<St, T>(
-    return_handler: (val: LangVal, state: St) => Trampoline<T>,
-    op_handler: (op: LangVal, state: St, resume: (val: LangVal, state: St) => Trampoline<T>) => Trampoline<T>,
-    code: LangVal,
-    state: St,
-): Trampoline<T> {
-    return run_monad_helper(return_handler, op_handler, code, state)
+function thislang_eval_statements(statements) {
+    return Function("\"use strict\";" + statements)();
 }
-function run_monad_stackoverflow<St, T>(
-    return_handler: (val: LangVal, state: St) => T,
-    op_handler: (op: LangVal, state: St, resume: (val: LangVal, state: St) => T) => T,
-    code: LangVal,
-    state: St,
-): T {
-    return run_trampoline(run_monad_helper(((v, s) => trampoline_return(return_handler(v, s))), ((op, st, rs) => trampoline_return(op_handler(op, st, (v, s) => run_trampoline(rs(v, s))))), code, state))
+function thislang_eval_expression(expression) {
+    return thislang_eval_statements(thislang_return(expression));
 }
-
-export {
-    Return_Effect_SystemName,
-    return_effect_systemName,
-    Bind_Effect_SystemName,
-    bind_effect_systemName,
-    new_effect_bind,
-    new_effect_return,
-    run_monad_trampoline,
-    run_monad_stackoverflow,
+function thislang_array(xs) {
+    return "[" + reduce_comma(xs) + "]";
 }
-//WIP
-// 相對獨立的部分。Effect }}}
-*/
+function thislang_call(f, args) {
+    return f + "(" + reduce_comma(args) + ")";
+}
+function thislang_lambda(args, statements) {
+    return "function(" + reduce_comma(args) + "){" + statements + "}";
+}
+function thislang_return(val) {
+    return "return " + val + ";";
+}

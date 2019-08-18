@@ -69,23 +69,38 @@ function un_just_all(raw: LangVal): LangVal {
 }
 export { un_just_all }
 
-function force_all(x: LangVal): LangVal {
-    const xs:Array<LangVal>=[x]
+function force_all_ignore_comment(x: LangVal): LangVal {
+    let xs:Array<LangVal>=[x]
     while(true){
         if(comment_p(x)){
+            for(const val of xs){
+                lang_assert_equal_set_do(val, x)
+            }
             x=comment_x(x)
+            xs=[x]
         }else if(delay_p(x)){
-            x=delay_exec(x)
+            x=delay_exec_1(x)
         }else if(just_p(x)){
             x = un_just(x)
         }else{
             for(const val of xs){
                 lang_assert_equal_set_do(val, x)
-                return x
             }
+            return x
         }
         xs.push(x)
     }
+}
+
+function force_all_delay_inner(comments:Array<LangVal>, x:LangVal, k:(comments:Array<LangVal>, v:LangVal)=>LangVal):LangVal{
+    while(comment_p(x)){
+        comments.push(x)
+        x=comment_x(x)
+    }
+    if(delay_p(x)){
+        throw 'WIP'
+    }
+    throw 'WIP'
 }
 
 // 相對獨立的部分。對內建數據結構的簡單處理 }}}

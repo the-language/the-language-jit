@@ -58,10 +58,16 @@ export type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false]
 interface LangValJustI extends LangValJustG<LangVal> { }
 export type LangValJust = LangValJustI & [LangValType.just_t, any, false]
 
-// exec為執行，display為不執行。
-export type LangValDelayG<exec extends ()=>LangVal, display extends ()=>LangVal> = [LangValType.delay_t, exec, display]
-interface LangValDelayI extends LangValDelayG<()=>LangVal, ()=>LangVal> { }
-export type LangValDelay = LangValDelayI & [LangValType.delay_t, ()=>LangVal, ()=>LangVal]
+const enum LangValDelayType {
+    normal_t,
+    wait_t,
+}
+export type LangValDelay = LangValDelayNormal | LangValDelayWait
+
+export type LangValDelayNormal = [LangValType.delay_t, LangValDelayType.normal_t, [()=>LangVal, ()=>LangVal]]
+export type LangValDelayWaitG<a extends LangValDelay, b extends (x:LangVal)=>LangVal, c extends ()=>LangVal> = [LangValType.delay_t, LangValDelayType.wait_t, [a, b, c]]
+interface LangValDelayWaitGI extends LangValDelayWaitG<LangValDelay, (x:LangVal)=>LangVal, ()=>LangVal> { }
+export type LangValDelayWait = LangValDelayWaitGI & [LangValType.delay_t, LangValDelayType.wait_t, [any, (x:LangVal)=>LangVal, ()=>LangVal]]
 
 export type LangValJustDelay = LangValJust | LangValDelay
 
@@ -166,24 +172,50 @@ export { just_p, un_just }
 function delay_p(x: LangVal): x is LangValDelay {
     return x[0] === delay_t
 }
-function new_delay(exec: ()=>LangVal, dis: ()=>LangVal):LangVal {
-    return [delay_t, exec, dis]
+// Normal: exec為化簡，dis為不化簡。
+function new_delay_normal(exec: ()=>LangVal, dis: ()=>LangVal):LangValDelayNormal {
+    return [delay_t, LangValDelayType.normal_t, [exec, dis]]
 }
-function evaluate(x: LangVal): LangVal {
-    return new_delay((()=>real_evaluate_with_enviromen(env_null_v, x)), (()=>x))
+function new_delay_wait(x: LangValDelay, next: (x:LangVal)=>LangVal, dis: ()=>LangVal): LangValDelayWait {
+    return [delay_t, LangValDelayType.wait_t, [x,next, dis]]
 }
-function delay_exec(x: LangValDelay): LangVal {
-    const r=x[1]()
-    x[2]=()=>r
-    lang_assert_equal_set_do(x, r)
-    return r
+function evaluate(x: LangVal): LangValDelayNormal {
+    return new_delay_normal((()=>real_evaluate_with_environment(env_null_v, x)), (()=>x))
+}
+function delay_exec_1(x: LangValDelay): LangVal {
+    if(x[1]===LangValDelayType.wait_t){
+        const vs=x[2]
+        const wait=delay_exec_1(vs[0])
+        if(delay_p(wait)){
+            return x
+        }else{
+            const n=vs[1](wait)
+            lang_assert_equal_set_do(x, n)
+            return n
+        }
+    }else{
+        const _t:LangValDelayType.normal_t = x[1]
+        const vs=x[2]
+        const r=vs[0]()
+        lang_assert_equal_set_do(x, r)
+        return r
+    }
 }
 function delay_display(x: LangValDelay): LangVal {
-    const r=x[2]()
-    x[2]=()=>r
-    return r
+    if(x[1]===LangValDelayType.wait_t){
+        const vs=x[2]
+        const r=vs[2]()
+        vs[2]=()=>r
+        return r
+    }else{
+        const _t:LangValDelayType.normal_t = x[1]
+        const vs=x[2]
+        const r=vs[1]()
+        vs[1]=()=>r
+        return r
+    }
 }
-export {delay_p, new_delay, delay_exec, delay_display}
+export {delay_p, new_delay_normal, new_delay_wait, delay_exec_1, delay_display}
 
 function new_hole_do(): LangValHole {
     return [hole_t, false, false]
