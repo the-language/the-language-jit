@@ -56,8 +56,8 @@ const thing_atom: Thing_Atom = new_atom("之物")
 const theWorldStopped_atom = new_atom("宇宙亡矣")
 type Effect_Atom = New_Atom<"效應">
 const effect_atom: Effect_Atom = new_atom("效應")
-//unused//const sequentialWordFormation_atom = new_atom('為符名連')
-//unused//const inputOutput_atom = new_atom("出入改滅")
+const sequentialWordFormation_atom = new_atom('為符名連')
+const inputOutput_atom = new_atom("出入改滅")
 const comment_atom = new_atom("註疏")
 
 const the_world_stopped_v: LangVal = new_error(system_atom, new_list(theWorldStopped_atom, something_atom))
