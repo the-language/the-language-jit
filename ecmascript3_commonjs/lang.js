@@ -63,7 +63,7 @@ var delay_t = 5 /* delay_t */;
 var comment_t = 7 /* comment_t */;
 var hole_t = 6 /* hole_t */;
 function new_comment(comment, x) {
-    return [comment_t, comment, x];
+    return [comment_t, comment, x, false];
 }
 exports.new_comment = new_comment;
 function comment_p(x) {
@@ -90,7 +90,7 @@ function atom_p(x) {
 }
 exports.atom_p = atom_p;
 function new_atom(x) {
-    return [atom_t, x, false];
+    return [atom_t, x, false, false];
 }
 exports.new_atom = new_atom;
 function un_atom(x) {
@@ -111,7 +111,7 @@ function atom_equal_p(x, y) {
 }
 exports.atom_equal_p = atom_equal_p;
 function new_construction(x, y) {
-    return [construction_t, x, y];
+    return [construction_t, x, y, false];
 }
 exports.new_construction = new_construction;
 function construction_p(x) {
@@ -126,14 +126,14 @@ function construction_tail(x) {
     return x[2];
 }
 exports.construction_tail = construction_tail;
-var null_v = [null_t, false, false];
+var null_v = [null_t, false, false, false];
 exports.null_v = null_v;
 function null_p(x) {
     return x[0] === null_t;
 }
 exports.null_p = null_p;
 function new_data(x, y) {
-    return [data_t, x, y];
+    return [data_t, x, y, false];
 }
 exports.new_data = new_data;
 function data_p(x) {
@@ -162,11 +162,11 @@ function delay_p(x) {
 exports.delay_p = delay_p;
 // Normal: exec為化簡，dis為不化簡。
 function new_delay_normal(exec, dis) {
-    return [delay_t, 0 /* normal_t */, [exec, dis]];
+    return [delay_t, 0 /* normal_t */, exec, dis];
 }
 exports.new_delay_normal = new_delay_normal;
 function new_delay_wait(x, next, dis) {
-    return [delay_t, 1 /* wait_t */, [x, next, dis]];
+    return [delay_t, 1 /* wait_t */, x, [next, dis]];
 }
 exports.new_delay_wait = new_delay_wait;
 function evaluate(x) {
@@ -174,44 +174,42 @@ function evaluate(x) {
 }
 function delay_exec_1(x) {
     if (x[1] === 1 /* wait_t */) {
-        var vs = x[2];
-        var wait = delay_exec_1(vs[0]);
+        var wait = un_just_all(delay_exec_1(x[2]));
         if (delay_p(wait)) {
+            x[2] = wait;
             return x;
         }
         else {
-            var n = vs[1](wait);
-            lang_assert_equal_set_do(x, n);
-            return n;
+            var next_r = x[3][0](wait);
+            lang_assert_equal_set_do(x, next_r);
+            return next_r;
         }
     }
     else {
         var _t = x[1];
-        var vs = x[2];
-        var r = vs[0]();
-        lang_assert_equal_set_do(x, r);
-        return r;
+        var exec_r = x[2]();
+        lang_assert_equal_set_do(x, exec_r);
+        return exec_r;
     }
 }
 exports.delay_exec_1 = delay_exec_1;
 function delay_display(x) {
     if (x[1] === 1 /* wait_t */) {
-        var vs = x[2];
-        var r_1 = vs[2]();
-        vs[2] = function () { return r_1; };
-        return r_1;
+        var next__dis = x[3];
+        var dis_r_1 = next__dis[1]();
+        next__dis[1] = function () { return dis_r_1; };
+        return dis_r_1;
     }
     else {
         var _t = x[1];
-        var vs = x[2];
-        var r_2 = vs[1]();
-        vs[1] = function () { return r_2; };
-        return r_2;
+        var dis_r_2 = x[3]();
+        x[3] = function () { return dis_r_2; };
+        return dis_r_2;
     }
 }
 exports.delay_display = delay_display;
 function new_hole_do() {
-    return [hole_t, false, false];
+    return [hole_t, false, false, false];
 }
 function hole_p(x) {
     return x[0] === hole_t;
@@ -228,6 +226,7 @@ function lang_assert_equal_set_do(x, y) {
     x[0] = just_t;
     x[1] = y;
     x[2] = false;
+    x[3] = false;
 }
 function hole_set_do(rawx, rawy) {
     LANG_ASSERT(hole_p(rawx)); // 可能曾经是hole，现在不是。
@@ -237,6 +236,7 @@ function hole_set_do(rawx, rawy) {
     x[0] = y[0];
     x[1] = y[1];
     x[2] = y[2];
+    x[3] = y[3];
 }
 function lang_copy_do(x) {
     var ret = new_hole_do();
