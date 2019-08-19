@@ -69,7 +69,7 @@ function un_just_all(raw: LangVal): LangVal {
 }
 export { un_just_all }
 
-function force_all_inner(comments: Array<LangVal>, x:LangVal):LangVal{
+function force_all_with__coments_ref(comments: Array<LangVal>, x: LangVal): LangVal {
     let xs: Array<LangVal> = [x]
     while (true) {
         if (comment_p(x)) {
@@ -94,12 +94,12 @@ function force_all_inner(comments: Array<LangVal>, x:LangVal):LangVal{
 }
 
 function force_all_ignore_comment(x: LangVal): LangVal {
-    return force_all_inner([],x)
+    return force_all_with__coments_ref([], x)
 }
 
-function force_all(x:LangVal):[LangVal, Array<LangVal>] {
-    const comments:Array<LangVal>=[]
-    const result=force_all_inner(comments,x)
+function force_all(x: LangVal): [LangVal, Array<LangVal>] {
+    const comments: Array<LangVal> = []
+    const result = force_all_with__coments_ref(comments, x)
     return [result, comments]
 }
 

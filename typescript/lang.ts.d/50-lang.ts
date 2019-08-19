@@ -25,17 +25,34 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     throw 'WIP'
 }
 
-const compiled_global_environment:Array<any> = []
-function compiled_global_environment_add(x:any):number{
-    const id=compiled_global_environment.length
+const compiled_global_environment: Array<any> = []
+const compiled_global_environment__recv: Array<ThisLang> = []
+function compiled_global_environment_add(x: any): string {
+    const id = compiled_global_environment.length
     compiled_global_environment.push(x)
-    return id
+    const id_s = thislang_id(id)
+    compiled_global_environment__recv.push(id_s)
+    return id_s
 }
-const compiled_global_environment__null_v=compiled_global_environment_add(null_v)
-
+const compiled_global_environment__null_v = compiled_global_environment_add(null_v)
+// WIP delay未正確處理(影響較小)
 function real_compile_with_environment(env: Env, raw_input: LangVal): ThisLang {
-    const x__comments=force_all(raw_input)
-    const x=x__comments[0]
-    const comments=x__comments[1]
+    const x__comments = force_all(raw_input)
+    let x = x__comments[0]
+    const comments = x__comments[1]
+    if (null_p(raw_input)) {
+        return compiled_global_environment__null_v
+    } else if (construction_p(x)) {
+        const xs = []
+        while (construction_p(x)) {
+            xs.push(construction_head(x))
+            x = force_all_with__coments_ref(comments, construction_tail(x))
+        }
+        if (null_p(x)) {
+            throw 'WIP'
+        } else {
+            throw 'WIP'
+        }
+    }
     throw 'WIP'
 }

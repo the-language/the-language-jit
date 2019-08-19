@@ -35,6 +35,10 @@ function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_return(expression))
 }
 
+function thislang_id(id: number): ThisLang {
+    return `v${id.toString()}`
+}
+
 function thislang_array(xs: Array<ThisLang>): ThisLang {
     return `[${reduce_comma(xs)}]`
 }
