@@ -22,13 +22,20 @@ function evaluate_with_environment(env: Env, x: LangVal): LangVal {
 }
 
 function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
-    return force_all_delay(x,
-        () => evaluate_with_environment(env, x),
-        (comments, x) => {
-            if (null_p(x)) {
-                return null_v
-            } else {
-                throw 'WIP'
-            }
-        })
+    throw 'WIP'
+}
+
+const compiled_global_environment:Array<any> = []
+function compiled_global_environment_add(x:any):number{
+    const id=compiled_global_environment.length
+    compiled_global_environment.push(x)
+    return id
+}
+const compiled_global_environment__null_v=compiled_global_environment_add(null_v)
+
+function real_compile_with_environment(env: Env, raw_input: LangVal): ThisLang {
+    const x__comments=force_all(raw_input)
+    const x=x__comments[0]
+    const comments=x__comments[1]
+    throw 'WIP'
 }
