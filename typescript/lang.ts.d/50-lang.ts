@@ -27,7 +27,7 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
 
 const compiled_global_environment: Array<any> = []
 const compiled_global_environment__recv: Array<ThisLang> = []
-function compiled_global_environment_add(x: any): string {
+function compiled_global_environment_add(x: any): ThisLang {
     const id = compiled_global_environment.length
     compiled_global_environment.push(x)
     const id_s = thislang_id(id)
@@ -49,7 +49,43 @@ function real_compile_with_environment(env: Env, raw_input: LangVal): ThisLang {
             x = force_all_with__coments_ref(comments, construction_tail(x))
         }
         if (null_p(x)) {
-            throw 'WIP'
+            if (xs.length > 0) {
+                const xs_head = xs[0]
+                // WIP comment未正確處理(影響較小)
+                if (equal_p(xs_head, form_use_systemName)) {
+                    if (xs.length < 1) {
+                        throw 'WIP'
+                    }
+                    const f = xs[1]
+                    xs.shift()
+                    xs.shift()
+                    const args = xs
+                    throw 'WIP'
+                } else if (equal_p(xs_head, function_builtin_use_systemName)) {
+                    if (xs.length < 1) {
+                        throw 'WIP'
+                    }
+                    const f = xs[1]
+                    xs.shift()
+                    xs.shift()
+                    const args = xs
+                    throw 'WIP'
+                } else if (equal_p(xs_head, form_builtin_use_systemName)) {
+                    if (xs.length < 1) {
+                        throw 'WIP'
+                    }
+                    const f = xs[1]
+                    xs.shift()
+                    xs.shift()
+                    const args = xs
+                    throw 'WIP'
+                } else {
+                    const f = xs[0]
+                    xs.shift()
+                    const args = xs
+                    throw 'WIP'
+                }
+            }
         } else {
             throw 'WIP'
         }

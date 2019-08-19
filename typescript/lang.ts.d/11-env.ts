@@ -18,7 +18,8 @@
 */
 
 // {{{ 相對獨立的部分。變量之環境
-
+/*
+// WIP
 export type Enviroment = (EnviromentNode | EnviromentTree) & [boolean, any, any]
 type EnviromentNodeG<resta extends Array<LangVal>, val extends LangVal> = [false, resta, val]
 interface EnviromentNodeI extends EnviromentNodeG<Array<LangVal>, LangVal> { }
@@ -143,6 +144,7 @@ function enviroment_set_helper(env: Enviroment, key: Array<LangVal>, val: LangVa
 }
 
 // 以下为OLD
+*/
 export type Env = Array<LangVal> // WIP
 
 const env_null_v: Env = []
