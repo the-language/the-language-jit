@@ -145,44 +145,45 @@ function enviroment_set_helper(env: Enviroment, key: Array<LangVal>, val: LangVa
 
 // 以下为OLD
 */
-export type Env = Array<LangVal> // WIP
+export type EnvLangValG<x> = Array<LangVal | x> // WIP
+export type Env = EnvLangValG<LangVal>
 
-const env_null_v: Env = []
-function env_set(env: Env, key: LangVal, val: LangVal): Env {
+const env_null_v: EnvLangValG<any> = []
+function env_set<T>(env: EnvLangValG<T>, key: LangVal, val: T): EnvLangValG<T> {
     let ret: Env = []
     for (let i = 0; i < env.length; i = i + 2) {
         // WIP delay未正確處理(影響較小)
-        if (equal_p(env[i + 0], key)) {
+        if (equal_p(env[i + 0] as any, key)) {
             ret[i + 0] = key
-            ret[i + 1] = val
+            ret[i + 1] = val as any
             for (i = i + 2; i < env.length; i = i + 2) {
-                ret[i + 0] = env[i + 0]
-                ret[i + 1] = env[i + 1]
+                ret[i + 0] = env[i + 0] as any
+                ret[i + 1] = env[i + 1] as any
             }
             return ret
         } else {
-            ret[i + 0] = env[i + 0]
-            ret[i + 1] = env[i + 1]
+            ret[i + 0] = env[i + 0] as any
+            ret[i + 1] = env[i + 1] as any
         }
     }
     ret[env.length + 0] = key
-    ret[env.length + 1] = val
+    ret[env.length + 1] = val as any
     return ret
 }
 
-function env_get<T>(env: Env, key: LangVal, default_v: T): T | LangVal {
+function env_get<D, T>(env: EnvLangValG<T>, key: LangVal, default_v: D): T | D {
     for (let i = 0; i < env.length; i = i + 2) {
-        if (equal_p(env[i + 0], key)) {
-            return env[i + 1]
+        if (equal_p(env[i + 0] as any, key)) {
+            return env[i + 1] as any
         }
     }
     return default_v
 }
 
-function must_env_get(env: Env, key: LangVal): LangVal {
+function must_env_get<T>(env: EnvLangValG<T>, key: LangVal): T {
     for (let i = 0; i < env.length; i = i + 2) {
-        if (equal_p(env[i + 0], key)) {
-            return env[i + 1]
+        if (equal_p(env[i + 0] as any, key)) {
+            return env[i + 1] as any
         }
     }
     return LANG_ERROR()
@@ -196,9 +197,9 @@ function env2val(env: Env): LangVal {
     return new_data(mapping_atom, new_list(ret))
 }
 
-function env_foreach(env: Env, f: (k: LangVal, v: LangVal) => void): void {
+function env_foreach<T>(env: EnvLangValG<T>, f: (k: LangVal, v: T) => void): void {
     for (let i = 0; i < env.length; i = i + 2) {
-        f(env[i + 0], env[i + 1])
+        f(env[i + 0] as any, env[i + 1] as any)
     }
 }
 

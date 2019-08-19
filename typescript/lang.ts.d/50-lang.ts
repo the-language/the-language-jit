@@ -35,8 +35,10 @@ function compiled_global_environment_add(x: any): ThisLang {
     return id_s
 }
 const compiled_global_environment__null_v = compiled_global_environment_add(null_v)
+// [0]为id计数。
+type CompilerScope = [number, EnvLangValG<ThisLang>]
 // WIP delay未正確處理(影響較小)
-function real_compile_with_environment(env: Env, raw_input: LangVal): ThisLang {
+function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal): ThisLang {
     const x__comments = force_all(raw_input)
     let x = x__comments[0]
     const comments = x__comments[1]
@@ -51,7 +53,7 @@ function real_compile_with_environment(env: Env, raw_input: LangVal): ThisLang {
         if (null_p(x)) {
             if (xs.length > 0) {
                 const xs_head = xs[0]
-                // WIP comment未正確處理(影響較小)
+                // WIP delay/comment未正確處理(影響較小)
                 if (equal_p(xs_head, form_use_systemName)) {
                     if (xs.length < 1) {
                         throw 'WIP'
