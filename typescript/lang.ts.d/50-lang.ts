@@ -64,7 +64,7 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
                     xs.shift()
                     xs.shift()
                     const args = xs
-                    throw 'WIP'
+                    return compile_form(scope, f, args, comments)
                 } else if (equal_p(xs_head, function_builtin_use_systemName)) {
                     if (xs.length < 1) {
                         throw 'WIP'
@@ -72,8 +72,11 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
                     const f = xs[1]
                     xs.shift()
                     xs.shift()
-                    const args = xs
-                    throw 'WIP'
+                    const args: Array<any> = xs
+                    for (let i = 0; i < args.length; i++) {
+                        args[i] = real_compile_with_environment(scope, args[i])
+                    }
+                    return compile_function_builtin(scope, f, args, comments)
                 } else if (equal_p(xs_head, form_builtin_use_systemName)) {
                     if (xs.length < 1) {
                         throw 'WIP'
@@ -82,7 +85,7 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
                     xs.shift()
                     xs.shift()
                     const args = xs
-                    throw 'WIP'
+                    return compile_form_builtin(scope, f, args, comments)
                 } else {
                     const f = xs[0]
                     xs.shift()
@@ -90,7 +93,7 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
                     for (let i = 0; i < args.length; i++) {
                         args[i] = real_compile_with_environment(scope, args[i])
                     }
-                    return compile_apply(scope, real_compile_with_environment(scope, f), args)
+                    return compile_apply(scope, real_compile_with_environment(scope, f), args, comments)
                 }
             }
         } else {
@@ -102,6 +105,15 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
 function apply(f: LangVal, args: Array<LangVal>): LangVal {
     throw 'WIP'
 }
-function compile_apply(scope: CompilerScope, f: ThisLang, args: Array<ThisLang>): ThisLang {
+function compile_form(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
+    throw 'WIP'
+}
+function compile_function_builtin(scope: CompilerScope, f: LangVal, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
+    throw 'WIP'
+}
+function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
+    throw 'WIP'
+}
+function compile_apply(scope: CompilerScope, f: ThisLang, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
     return thislang_call(compiled_global_environment__apply, [f, thislang_array(args)])
 }
