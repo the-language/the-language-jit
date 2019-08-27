@@ -50,9 +50,15 @@ export type LangValCons = LangValConsI & LangValConsG<any, any>
 
 export type LangValNull = [LangValType.null_t, false, false, false]
 
-export type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, false]
+export type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, false | LangValDataOptimized]
 interface LangValDataI extends LangValDataG<LangVal, LangVal> { }
 export type LangValData = LangValDataI & LangValDataG<any, any>
+
+const enum LangValDataOptimizedType {
+    closure_t,
+}
+export type LangValDataOptimizedClosure = [LangValDataOptimizedType.closure_t, (args: Array<LangVal>) => LangVal]
+export type LangValDataOptimized = LangValDataOptimizedClosure
 
 export type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false, false]
 interface LangValJustI extends LangValJustG<LangVal> { }
