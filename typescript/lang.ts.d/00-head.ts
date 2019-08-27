@@ -30,6 +30,8 @@ type OrFalse<x> = x | false
 
 type TrueFalseNull = true | false | null // null一般表示未知。
 
+type Nat = number
+
 /* 一些命名规则
   _p 判断。一般返回boolean。
   _p3 判断。一般返回TrueFalseNull。

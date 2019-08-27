@@ -25,18 +25,20 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     throw 'WIP'
 }
 
+let compiled_global_environment__gensym_state: Nat = 0
 const compiled_global_environment: Array<any> = []
 const compiled_global_environment__recv: Array<ThisLang> = []
 function compiled_global_environment_add(x: any): ThisLang {
-    const id = compiled_global_environment.length
     compiled_global_environment.push(x)
-    const id_s = thislang_id(id)
+    const id_s = thislang_gensym(compiled_global_environment__gensym_state)
+    compiled_global_environment__gensym_state++
     compiled_global_environment__recv.push(id_s)
     return id_s
 }
 const compiled_global_environment__null_v = compiled_global_environment_add(null_v)
-// [0]为id计数。
-type CompilerScope = [number, EnvLangValG<ThisLang>]
+const compiled_global_environment__apply = compiled_global_environment_add(apply)
+// [0]为gensym_state。
+type CompilerScope = [Nat, EnvLangValG<ThisLang>]
 // WIP delay未正確處理(影響較小)
 function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal): ThisLang {
     const x__comments = force_all(raw_input)
@@ -84,8 +86,11 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
                 } else {
                     const f = xs[0]
                     xs.shift()
-                    const args = xs
-                    throw 'WIP'
+                    const args: Array<any> = xs
+                    for (let i = 0; i < args.length; i++) {
+                        args[i] = real_compile_with_environment(scope, args[i])
+                    }
+                    return compile_apply(scope, real_compile_with_environment(scope, f), args)
                 }
             }
         } else {
@@ -93,4 +98,10 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
         }
     }
     throw 'WIP'
+}
+function apply(f: LangVal, args: Array<LangVal>): LangVal {
+    throw 'WIP'
+}
+function compile_apply(scope: CompilerScope, f: ThisLang, args: Array<ThisLang>): ThisLang {
+    return thislang_call(compiled_global_environment__apply, [f, thislang_array(args)])
 }

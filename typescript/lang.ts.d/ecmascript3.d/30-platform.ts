@@ -35,8 +35,8 @@ function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_return(expression))
 }
 
-function thislang_id(id: number): ThisLang {
-    return `v${id.toString()}`
+function thislang_gensym(state: Nat): ThisLang {
+    return `v${state.toString(36)}`
 }
 
 function thislang_array(xs: Array<ThisLang>): ThisLang {
