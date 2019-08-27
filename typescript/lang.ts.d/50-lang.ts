@@ -25,20 +25,21 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     throw 'WIP'
 }
 
-let compiled_global_environment__gensym_state: Nat = 0
-const compiled_global_environment: Array<any> = []
-const compiled_global_environment__recv: Array<ThisLang> = []
-function compiled_global_environment_add(x: any): ThisLang {
-    compiled_global_environment.push(x)
-    const id_s = thislang_gensym(compiled_global_environment__gensym_state)
-    compiled_global_environment__gensym_state++
-    compiled_global_environment__recv.push(id_s)
+// [0]为gensym_state。
+type CompiledGlobalEnvironment = [Nat, Array<any>, Array<ThisLang>]
+
+const compiled_global_environment:CompiledGlobalEnvironment = [0, [], []]
+
+function compiled_global_environment_add(env: CompiledGlobalEnvironment, x: any): ThisLang {
+    env[1].push(x)
+    const id_s = thislang_gensym(env[0])
+    env[0]++
+    env[2].push(id_s)
     return id_s
 }
-const compiled_global_environment__null_v = compiled_global_environment_add(null_v)
-const compiled_global_environment__apply = compiled_global_environment_add(apply)
-// [0]为gensym_state。
-type CompilerScope = [Nat, EnvLangValG<ThisLang>]
+const compiled_global_environment__null_v = compiled_global_environment_add(compiled_global_environment, null_v)
+const compiled_global_environment__apply = compiled_global_environment_add(compiled_global_environment, apply)
+type CompilerScope = [EnvLangValG<ThisLang>, CompiledGlobalEnvironment]
 // WIP delay未正確處理(影響較小)
 function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal): ThisLang {
     const x__comments = force_all(raw_input)
@@ -112,6 +113,12 @@ function compile_function_builtin(scope: CompilerScope, f: LangVal, args: Array<
     throw 'WIP'
 }
 function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
+    if (equal_p(f, quote_form_builtin_systemName)) {
+        if (args.length !== 1) {
+            throw 'WIP'
+        }
+        return compiled_global_environment_add(scope[1], args[0])
+    }
     throw 'WIP'
 }
 function compile_apply(scope: CompilerScope, f: ThisLang, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
