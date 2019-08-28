@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@zaoqi/biwascheme": "^0.6.9-2-fd80e7719b26e2f02b7c3e53422b05240f7b133b",
+    "@zaoqi/biwascheme": "^0.6.9-4-ecbc0c5c4fd8b90aa64bfbf0214483220e71eea1",
     "jest": "^24.9.0",
     "typescript": "^3.5.3"
   },
