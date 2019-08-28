@@ -1,6 +1,11 @@
 {
   "devDependencies": {
+    "@zaoqi/biwascheme": "^0.6.9-2-fd80e7719b26e2f02b7c3e53422b05240f7b133b",
+    "mocha": "^6.2.0",
     "typescript": "^3.5.3"
+  },
+  "scripts": {
+    "test": "mocha"
   },
   "name": "the-language-jit",
   "version": "0.0.0",

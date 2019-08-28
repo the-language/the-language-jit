@@ -4,7 +4,7 @@ all: $(ALL)
 .PHONY: all
 
 clean:
-	rm $(ALL)
+	rm $(ALL) */node_modules
 .PHONY: clean
 
 typescript/node_modules: typescript/yarn.lock
