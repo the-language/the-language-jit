@@ -26,27 +26,48 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
 }
 
 // [0]为gensym_state。
-type CompiledGlobalEnvironment = [Nat, Array<any>, Array<ThisLang>]
+// [1]为值。
+// [2]为ThisLang的标识符。
+// [3]为已加入的东西的记录
+type CompiledGlobalEnvironment = [Nat, Array<any>, Array<ThisLang>, Array<true | undefined>]
 
-const compiled_global_environment: CompiledGlobalEnvironment = [0, [], []]
+const compiled_global_environment: CompiledGlobalEnvironment = [0, [], [], []]
 
-function compiled_global_environment_add(env: CompiledGlobalEnvironment, x: any): ThisLang {
-    env[1].push(x)
-    const id_s = thislang_gensym(env[0])
-    env[0]++
-    env[2].push(id_s)
-    return id_s
+function compiled_global_environment_add__root(raw_env: CompiledGlobalEnvironment, x: any): (x: CompilerScope) => ThisLang {
+    const id = raw_env[0]
+    const id_s = thislang_gensym(id)
+    raw_env[0]++
+    return (scope) => { // 用于clone_compiled_global_environment后。
+        if (scope[1][3][id] !== true) {
+            scope[1][1].push(x)
+            scope[1][2].push(id_s)
+        }
+        return id_s
+    }
 }
-const compiled_global_environment__null_v = compiled_global_environment_add(compiled_global_environment, null_v)
-const compiled_global_environment__apply = compiled_global_environment_add(compiled_global_environment, apply)
+// cogl为compiled_global_environment....的缩写
+const cogl__null_v = compiled_global_environment_add__root(compiled_global_environment, null_v)
+const cogl__apply = compiled_global_environment_add__root(compiled_global_environment, apply)
+const cogl__new_data = compiled_global_environment_add__root(compiled_global_environment, new_data)
+const cogl__new_data_optimized = compiled_global_environment_add__root(compiled_global_environment, new_data_optimized)
+function clone_compiled_global_environment(x: CompiledGlobalEnvironment): CompiledGlobalEnvironment {
+    return [x[0], x[1].slice(), x[2].slice(), x[3].slice()]
+}
 type CompilerScope = [EnvLangValG<ThisLang>, CompiledGlobalEnvironment]
 function scope_inner__replace_environment(scope: CompilerScope, env: EnvLangValG<ThisLang>): CompilerScope {
     return [env, scope[1]]
 }
 function scope_gensym_do(scope: CompilerScope): ThisLang {
-    const result = thislang_gensym(scope[1][0])
+    const id_s = thislang_gensym(scope[1][0])
     scope[1][0]++
-    return result
+    return id_s
+}
+function scope_global_add(scope: CompilerScope, x: any): ThisLang {
+    const id_s = thislang_gensym(scope[1][0])
+    scope[1][0]++
+    scope[1][1].push(x)
+    scope[1][2].push(id_s)
+    return id_s
 }
 // WIP delay未正確處理(影響較小)
 function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal): ThisLang {
@@ -54,7 +75,7 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
     let x = x__comments[0]
     const comments = x__comments[1]
     if (null_p(raw_input)) {
-        return compiled_global_environment__null_v
+        return cogl__null_v(scope)
     } else if (construction_p(x)) {
         const xs = []
         while (construction_p(x)) {
@@ -123,18 +144,22 @@ function compile_function_builtin(scope: CompilerScope, f: LangVal, args: Array<
 function name_p(x: LangVal): boolean {
     throw 'WIP'
 }
+function make_quote(x: LangVal): LangVal {
+    return new_list(form_builtin_use_systemName, quote_form_builtin_systemName, x)
+}
 function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
     if (equal_p(f, quote_form_builtin_systemName)) {
         if (args.length !== 1) {
             throw 'WIP'
         }
-        return compiled_global_environment_add(scope[1], args[0])
+        return scope_global_add(scope, args[0])
     } else if (equal_p(f, lambda_form_builtin_systemName)) {
         if (args.length !== 2) {
             throw 'WIP'
         }
         const body = args[1]
-        let pattern_iter = force_all_with__coments_ref(comments, args[0])
+        const raw_pattern = args[0]
+        let pattern_iter = force_all_with__coments_ref(comments, raw_pattern)
         const pattern_list: Array<LangVal> = []
         // WIP 未判断标识符类型是否正确
         while (construction_p(pattern_iter)) {
@@ -168,10 +193,10 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
             inner_env = env_set(inner_env, pattern_tail, id)
         }
         const body_compiled = real_compile_with_environment(scope_inner__replace_environment(scope, inner_env), body)
-        throw 'WIP'
+        return thislang_call(cogl__new_data_optimized(scope), [(() => { throw 'WIP' })()])
     }
     throw 'WIP'
 }
 function compile_apply(scope: CompilerScope, f: ThisLang, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
-    return thislang_call(compiled_global_environment__apply, [f, thislang_array(args)])
+    return thislang_call(cogl__apply(scope), [f, thislang_array(args)])
 }

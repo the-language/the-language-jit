@@ -156,6 +156,9 @@ type New_Data<X extends LangVal, Y extends LangVal> = LangValDataG<X, Y>
 function new_data<X extends LangVal, Y extends LangVal>(x: X, y: Y): New_Data<X, Y> {
     return [data_t, x, y, false]
 }
+function new_data_optimized<X extends LangVal, Y extends LangVal>(x: X, y: Y, o: LangValDataOptimized): New_Data<X, Y> {
+    return [data_t, x, y, o]
+}
 function data_p(x: LangVal): x is LangValData {
     return x[0] === data_t
 }
@@ -164,6 +167,9 @@ function data_name<X extends LangVal, Y extends LangVal>(x: LangValDataG<X, Y>):
 }
 function data_list<X extends LangVal, Y extends LangVal>(x: LangValDataG<X, Y>): Y {
     return x[2]
+}
+function data_optimized(x: LangValData): false | LangValDataOptimized {
+    return x[3]
 }
 export { New_Data, new_data, data_p, data_name, data_list }
 
