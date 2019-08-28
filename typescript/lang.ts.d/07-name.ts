@@ -61,7 +61,7 @@ const sequentialWordFormation_atom = new_atom('為符名連')
 const inputOutput_atom = new_atom("出入改滅")
 const comment_atom = new_atom("註疏")
 
-const the_world_stopped_v: LangVal = new_error(system_atom, new_list(theWorldStopped_atom, something_atom))
+const the_world_stopped_v: LangVal = new_error(system_atom, jsArray_to_list([theWorldStopped_atom, something_atom]))
 
 // 指內建標識符系統
 type SystemName_Make<X extends LangVal> = New_Data<Name_Atom, New_Construction<System_Atom, New_Construction<X, Null_V>>>
@@ -69,13 +69,13 @@ function systemName_make<X extends LangVal>(x: X): SystemName_Make<X> {
     return new_data(name_atom, new_construction(system_atom, new_construction(x, null_v)))
 }
 function make_builtin_f_new_sym_f(x_sym: LangValAtom): LangVal {
-    return systemName_make(new_list(typeAnnotation_atom, new_list(function_atom, something_atom, x_sym), theThing_atom))
+    return systemName_make(jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, something_atom, x_sym]), theThing_atom]))
 }
 function make_builtin_f_get_sym_f(t_sym: LangValAtom, x_sym: LangVal): LangVal {
-    return systemName_make(new_list(typeAnnotation_atom, new_list(function_atom, new_list(t_sym), something_atom), x_sym))
+    return systemName_make(jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, jsArray_to_list([t_sym]), something_atom]), x_sym]))
 }
 function make_builtin_f_p_sym_f(t_sym: LangValAtom): LangVal {
-    return systemName_make(new_list(typeAnnotation_atom, function_atom, new_list(isOrNot_atom, new_list(typeAnnotation_atom, t_sym, something_atom))))
+    return systemName_make(jsArray_to_list([typeAnnotation_atom, function_atom, jsArray_to_list([isOrNot_atom, jsArray_to_list([typeAnnotation_atom, t_sym, something_atom])])]))
 }
 const new_data_function_builtin_systemName = make_builtin_f_new_sym_f(data_atom)
 const data_name_function_builtin_systemName = make_builtin_f_get_sym_f(data_atom, name_atom)
@@ -91,22 +91,22 @@ const atom_p_function_builtin_systemName = make_builtin_f_p_sym_f(atom_atom)
 
 const null_p_function_builtin_systemName = make_builtin_f_p_sym_f(null_atom)
 
-const equal_p_function_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, function_atom, new_list(isOrNot_atom, equal_atom)))
-const apply_function_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, new_list(function_atom, new_construction(function_atom, something_atom), something_atom), apply_atom))
-const evaluate_function_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, function_atom, evaluate_sym))
-const list_chooseOne_function_builtin_systemName = make_builtin_f_get_sym_f(list_atom, new_list(typeAnnotation_atom, thing_atom, something_atom))
-const if_function_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, function_atom, if_atom))
+const equal_p_function_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, function_atom, jsArray_to_list([isOrNot_atom, equal_atom])]))
+const apply_function_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, new_construction(function_atom, something_atom), something_atom]), apply_atom]))
+const evaluate_function_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, function_atom, evaluate_sym]))
+const list_chooseOne_function_builtin_systemName = make_builtin_f_get_sym_f(list_atom, jsArray_to_list([typeAnnotation_atom, thing_atom, something_atom]))
+const if_function_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, function_atom, if_atom]))
 
-const quote_form_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, form_atom, quote_atom))
-const lambda_form_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, new_list(form_atom, new_list(function_atom, something_atom, function_atom)), theThing_atom))
+const quote_form_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, form_atom, quote_atom]))
+const lambda_form_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, jsArray_to_list([form_atom, jsArray_to_list([function_atom, something_atom, function_atom])]), theThing_atom]))
 
-const function_builtin_use_systemName = systemName_make(new_list(form_atom, new_list(system_atom, function_atom)))
-const form_builtin_use_systemName = systemName_make(new_list(form_atom, new_list(system_atom, form_atom)))
-const form_use_systemName = systemName_make(new_list(form_atom, form_atom))
+const function_builtin_use_systemName = systemName_make(jsArray_to_list([form_atom, jsArray_to_list([system_atom, function_atom])]))
+const form_builtin_use_systemName = systemName_make(jsArray_to_list([form_atom, jsArray_to_list([system_atom, form_atom])]))
+const form_use_systemName = systemName_make(jsArray_to_list([form_atom, form_atom]))
 
-const comment_function_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, function_atom, comment_atom))
-const comment_form_builtin_systemName = systemName_make(new_list(typeAnnotation_atom, form_atom, comment_atom))
+const comment_function_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, function_atom, comment_atom]))
+const comment_form_builtin_systemName = systemName_make(jsArray_to_list([typeAnnotation_atom, form_atom, comment_atom]))
 
-const false_v: LangVal = new_data(false_atom, new_list())
-const true_v: LangVal = new_data(true_atom, new_list())
+const false_v: LangVal = new_data(false_atom, null_v)
+const true_v: LangVal = new_data(true_atom, null_v)
 // 相對獨立的部分。符號名稱 }}}

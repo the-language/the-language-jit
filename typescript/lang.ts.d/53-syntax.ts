@@ -324,17 +324,17 @@ function complex_parse(x: string): LangVal {
         const head = get()
         if (head === '.') {
             const y = readsysname_no_pack_inner_must()
-            return new_list(typeAnnotation_atom, new_list(function_atom, new_list(vl), something_atom), y)
+            return jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, jsArray_to_list([vl]), something_atom]), y])
         } else if (head === ':') {
             const y = readsysname_no_pack_inner_must()
-            return new_list(typeAnnotation_atom, y, vl)
+            return jsArray_to_list([typeAnnotation_atom, y, vl])
         } else if (head === '~') {
-            return new_list(isOrNot_atom, vl)
+            return jsArray_to_list([isOrNot_atom, vl])
         } else if (head === '@') {
             const y = readsysname_no_pack_inner_must()
-            return new_list(typeAnnotation_atom, new_list(function_atom, new_construction(vl, something_atom), something_atom), y)
+            return jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, jsArray_to_list([vl, something_atom]), something_atom]), y])
         } else if (head === '?') {
-            return new_list(typeAnnotation_atom, function_atom, new_list(isOrNot_atom, vl))
+            return jsArray_to_list([typeAnnotation_atom, function_atom, jsArray_to_list([isOrNot_atom, vl])])
         } else if (head === '/') {
             let ys: Array<LangVal> = [vl]
             while (true) {
@@ -348,7 +348,7 @@ function complex_parse(x: string): LangVal {
                     break
                 }
             }
-            return new_list(sub_atom, jsArray_to_list(ys))
+            return jsArray_to_list([sub_atom, jsArray_to_list(ys)])
         } else {
             put(head)
             return vl
@@ -364,35 +364,35 @@ function complex_parse(x: string): LangVal {
             const c0 = get()
             if (c0 === '+') {
                 const x = readsysname_no_pack_inner_must()
-                return new_list(form_atom, new_list(system_atom, x))
+                return jsArray_to_list([form_atom, jsArray_to_list([system_atom, x])])
             } else {
                 put(c0)
             }
             const x = readsysname_no_pack_inner_must()
-            return new_list(form_atom, x)
+            return jsArray_to_list([form_atom, x])
         } else if (head === ':') {
             un_maybe(not_eof())
             const c0 = get()
             if (c0 === '&') {
                 assert_get('>')
                 const x = readsysname_no_pack_inner_must()
-                return new_list(typeAnnotation_atom,
-                    new_list(form_atom,
-                        new_list(function_atom, something_atom, x)),
-                    theThing_atom)
+                return jsArray_to_list([typeAnnotation_atom,
+                    jsArray_to_list([form_atom,
+                        jsArray_to_list([function_atom, something_atom, x])]),
+                    theThing_atom])
             } else if (c0 === '>') {
                 const x = readsysname_no_pack_inner_must()
-                return new_list(typeAnnotation_atom,
-                    new_list(function_atom, something_atom, x),
-                    theThing_atom)
+                return jsArray_to_list([typeAnnotation_atom,
+                    jsArray_to_list([function_atom, something_atom, x]),
+                    theThing_atom])
             } else {
                 put(c0)
             }
             const x = readsysname_no_pack_inner_must()
-            return new_list(typeAnnotation_atom, x, theThing_atom)
+            return jsArray_to_list([typeAnnotation_atom, x, theThing_atom])
         } else if (head === '+') {
             const x = readsysname_no_pack_inner_must()
-            return new_list(system_atom, x)
+            return jsArray_to_list([system_atom, x])
         } else if (head === '[') {
             const x = readsysname_no_pack_inner_must()
             assert_get(']')
@@ -400,7 +400,7 @@ function complex_parse(x: string): LangVal {
         } else if (head === '_') {
             assert_get(':')
             const x = readsysname_no_pack_inner_must()
-            return new_list(typeAnnotation_atom, x, something_atom)
+            return jsArray_to_list([typeAnnotation_atom, x, something_atom])
         } else {
             put(head)
             const x = atom()
@@ -437,32 +437,32 @@ function complex_print(val: LangVal): string {
         }
         const maybe_xs = maybe_list_to_jsArray(x)
         if (maybe_xs !== false && maybe_xs.length === 3 && jsbool_no_force_isomorphism_p(maybe_xs[0], typeAnnotation_atom)) {
-            // new_list(typeAnnotation_atom, maybe_xs[1], maybe_xs[2])
+            // jsArray_to_list([typeAnnotation_atom, maybe_xs[1], maybe_xs[2]])
             const maybe_lst_2 = maybe_list_to_jsArray(maybe_xs[1])
             if (maybe_lst_2 !== false && maybe_lst_2.length === 3 && jsbool_no_force_isomorphism_p(maybe_lst_2[0], function_atom)) {
                 const var_2_1 = maybe_lst_2[1]
-                // new_list(typeAnnotation_atom, new_list(function_atom, var_2_1, maybe_lst_2[2]), maybe_xs[2])
+                // jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, var_2_1, maybe_lst_2[2]]), maybe_xs[2]])
                 const maybe_lst_3 = maybe_list_to_jsArray(var_2_1)
                 if (maybe_lst_3 !== false && maybe_lst_3.length === 1 && jsbool_no_force_isomorphism_p(maybe_lst_2[2], something_atom)) {
-                    // new_list(typeAnnotation_atom, new_list(function_atom, new_list(maybe_lst_3[0]), something_atom), maybe_xs[2])
+                    // jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, jsArray_to_list([maybe_lst_3[0]]), something_atom]), maybe_xs[2]])
                     return inner_bracket(print_sys_name(maybe_lst_3[0], true) + '.' + print_sys_name(maybe_xs[2], true))
                 } else if (construction_p(var_2_1) && jsbool_no_force_isomorphism_p(construction_tail(var_2_1), something_atom) && jsbool_no_force_isomorphism_p(maybe_lst_2[2], something_atom)) {
-                    // new_list(typeAnnotation_atom, new_list(function_atom, new_construction(construction_head(var_2_1), something_atom), something_atom), maybe_xs[2])
+                    // jsArray_to_list([typeAnnotation_atom, jsArray_to_list(function_atom, new_construction(construction_head(var_2_1), something_atom), something_atom]), maybe_xs[2]])
                     return inner_bracket(print_sys_name(construction_head(var_2_1), true) + '@' + print_sys_name(maybe_xs[2], true))
                 } else if (jsbool_no_force_isomorphism_p(var_2_1, something_atom) && jsbool_no_force_isomorphism_p(maybe_xs[2], theThing_atom)) {
-                    // new_list(typeAnnotation_atom, new_list(function_atom, something_atom, maybe_lst_2[2]), theThing_atom)
+                    // jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, something_atom, maybe_lst_2[2]]), theThing_atom])
                     return inner_bracket(':>' + print_sys_name(maybe_lst_2[2], true))
                 }
             } const maybe_lst_44 = maybe_list_to_jsArray(maybe_xs[2])
             if (jsbool_no_force_isomorphism_p(maybe_xs[1], function_atom) && maybe_lst_44 !== false && maybe_lst_44.length === 2 && jsbool_no_force_isomorphism_p(maybe_lst_44[0], isOrNot_atom)) {
-                // new_list(typeAnnotation_atom, function_atom, new_list(isOrNot_atom, maybe_lst_44[1]))
+                // jsArray_to_list([typeAnnotation_atom, function_atom, jsArray_to_list([isOrNot_atom, maybe_lst_44[1]])])
                 return inner_bracket(print_sys_name(maybe_lst_44[1], true) + '?')
             }
             if (maybe_lst_2 !== false && maybe_lst_2.length === 2 && jsbool_no_force_isomorphism_p(maybe_xs[2], theThing_atom) && jsbool_no_force_isomorphism_p(maybe_lst_2[0], form_atom)) {
-                // new_list(typeAnnotation_atom, new_list(form_atom, var_2_1), theThing_atom)
+                // jsArray_to_list([typeAnnotation_atom, jsArray_to_list([form_atom, var_2_1]), theThing_atom])
                 const maybe_lst_88 = maybe_list_to_jsArray(maybe_lst_2[1])
                 if (maybe_lst_88 !== false && maybe_lst_88.length === 3 && jsbool_no_force_isomorphism_p(maybe_lst_88[0], function_atom) && jsbool_no_force_isomorphism_p(maybe_lst_88[1], something_atom)) {
-                    // new_list(typeAnnotation_atom, new_list(form_atom, new_list(function_atom, something_atom, maybe_lst_88[2])), theThing_atom)
+                    // jsArray_to_list([typeAnnotation_atom, jsArray_to_list([form_atom, jsArray_to_list([function_atom, something_atom, maybe_lst_88[2]])]), theThing_atom])
                     return inner_bracket(':&>' + print_sys_name(maybe_lst_88[2], true))
                 }
             }
@@ -477,21 +477,21 @@ function complex_print(val: LangVal): string {
             return inner_bracket(hd + ':' + print_sys_name(maybe_xs[1], true))
         } else if (maybe_xs !== false && maybe_xs.length === 2) {
             if (jsbool_no_force_isomorphism_p(maybe_xs[0], form_atom)) {
-                // new_list(form_atom, maybe_xs[1])
+                // jsArray_to_list([form_atom, maybe_xs[1]])
                 const maybe_lst_288 = maybe_list_to_jsArray(maybe_xs[1])
                 if (maybe_lst_288 !== false && maybe_lst_288.length === 2 && jsbool_no_force_isomorphism_p(maybe_lst_288[0], system_atom)) {
-                    // new_list(form_atom, new_list(system_atom, maybe_lst_288[1]))
+                    // jsArray_to_list([form_atom, jsArray_to_list([system_atom, maybe_lst_288[1]])])
                     return inner_bracket('&+' + print_sys_name(maybe_lst_288[1], true))
                 }
                 return inner_bracket('&' + print_sys_name(maybe_xs[1], true))
             } else if (jsbool_no_force_isomorphism_p(maybe_xs[0], isOrNot_atom)) {
-                // new_list(isOrNot_atom, maybe_xs[1])
+                // jsArray_to_list([isOrNot_atom, maybe_xs[1]])
                 return inner_bracket(print_sys_name(maybe_xs[1], true) + '~')
             } else if (jsbool_no_force_isomorphism_p(maybe_xs[0], system_atom)) {
-                // new_list(system_atom, maybe_xs[1])
+                // jsArray_to_list([system_atom, maybe_xs[1]])
                 return inner_bracket('+' + print_sys_name(maybe_xs[1], true))
             } else if (jsbool_no_force_isomorphism_p(maybe_xs[0], sub_atom)) {
-                // new_list(sub_atom, maybe_xs[1])
+                // jsArray_to_list([sub_atom, maybe_xs[1]])
                 const maybe_lst_8934 = maybe_list_to_jsArray(maybe_xs[1])
                 if (maybe_lst_8934 !== false && maybe_lst_8934.length > 1) {
                     let tmp = print_sys_name(maybe_lst_8934[0], true)

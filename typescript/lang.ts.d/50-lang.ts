@@ -155,7 +155,7 @@ function name_p(x: LangVal): boolean {
     throw 'WIP'
 }
 function make_quote(x: LangVal): LangVal {
-    return new_list(form_builtin_use_systemName, quote_form_builtin_systemName, x)
+    return jsArray_to_list([form_builtin_use_systemName, quote_form_builtin_systemName, x])
 }
 function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
     if (equal_p(f, quote_form_builtin_systemName)) {
@@ -220,7 +220,10 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
         compiled_statements.push(thislang_statement_return(body_compiled))
         const compiled = thislang_lambda([id__tmp_args], thislang_concat_statements(compiled_statements))
         return thislang_call(cogl__new_data_optimized_closure(scope), [
-            (() => { throw 'WIP' })(),
+            thislang_call(cogl__new_data(scope), [
+                cogl__function_atom(scope),
+                (() => { throw 'WIP' })()
+            ]),
             compiled])
     }
     throw 'WIP'

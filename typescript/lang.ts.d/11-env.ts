@@ -192,9 +192,9 @@ function must_env_get<T>(env: EnvLangValG<T>, key: LangVal): T {
 function env2val(env: Env): LangVal {
     let ret: LangVal = null_v
     for (let i = 0; i < env.length; i = i + 2) {
-        ret = new_construction(new_list(env[i + 0], env[i + 1]), ret)
+        ret = new_construction(jsArray_to_list([env[i + 0], env[i + 1]]), ret)
     }
-    return new_data(mapping_atom, new_list(ret))
+    return new_data(mapping_atom, jsArray_to_list([ret]))
 }
 
 function env_foreach<T>(env: EnvLangValG<T>, f: (k: LangVal, v: T) => void): void {

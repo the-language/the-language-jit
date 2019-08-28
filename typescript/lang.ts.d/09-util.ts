@@ -47,10 +47,7 @@ function list_to_jsArray<T>(
 function maybe_list_to_jsArray(xs: LangVal): OrFalse<Array<LangVal>> {
     return list_to_jsArray<OrFalse<Array<LangVal>>>(xs, (x) => x, (_1, _2) => false)
 }
-function new_list(...xs: Array<LangVal>): LangVal {
-    return jsArray_to_list(xs)
-}
-export { jsArray_to_list, maybe_list_to_jsArray, new_list }
+export { jsArray_to_list, maybe_list_to_jsArray }
 
 function un_just_all(raw: LangVal): LangVal {
     if (!just_p(raw)) { return raw }
