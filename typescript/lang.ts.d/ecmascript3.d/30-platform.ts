@@ -23,7 +23,7 @@ function reduce_comma(xs: Array<string>): string {
     if (xs.length === 0) { return "" }
     let result = xs[0]
     for (let i = 1; i < xs.length; i++) {
-        result = `${result},${xs[i]}`
+        result += `,${xs[i]}`
     }
     return result
 }

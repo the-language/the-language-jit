@@ -177,6 +177,10 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
             pattern_iter = force_all_with__coments_ref(comments, construction_tail(pattern_iter))
         }
         const pattern_tail: LangVal | null = null_p(pattern_iter) ? null : pattern_iter
+        let forced_pattern: LangVal = pattern_tail === null ? null_v : pattern_tail
+        for (let i = pattern_list.length - 1; i >= 0; i--) {
+            forced_pattern = new_construction(pattern_list[i], forced_pattern)
+        }
         let inner_upvals_env: EnvLangValG<ThisLang> = env_null_v
         env_foreach(scope[0], (k, v) => {
             for (const pat_k of pattern_list) {
@@ -220,10 +224,12 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
         compiled_statements.push(thislang_statement_return(body_compiled))
         const compiled = thislang_lambda([id__tmp_args], thislang_concat_statements(compiled_statements))
         return thislang_call(cogl__new_data_optimized_closure(scope), [
-            thislang_call(cogl__new_data(scope), [
-                cogl__function_atom(scope),
-                (() => { throw 'WIP' })()
-            ]),
+            thislang_call(
+                cogl__jsArray_to_list(scope),
+                [thislang_array([scope_global_add_do(scope, forced_pattern),
+                thislang_call(cogl__jsArray_to_list(scope),
+                    (() => { throw 'WIP' })()
+                )])]),
             compiled])
     }
     throw 'WIP'
