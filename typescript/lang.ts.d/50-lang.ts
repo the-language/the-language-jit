@@ -32,7 +32,12 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
 type CompiledGlobalEnvironment = [Nat, Array<any>, Array<ThisLang>, Array<true | undefined>]
 
 const compiled_global_environment: CompiledGlobalEnvironment = [0, [], [], []]
-
+function compiled_global_environment_gensym_do(env: CompiledGlobalEnvironment): ThisLang {
+    const id = env[0]
+    const id_s = thislang_gensym(id)
+    env[0]++
+    return id_s
+}
 function compiled_global_environment_add__root(raw_env: CompiledGlobalEnvironment, x: any): (x: CompilerScope) => ThisLang {
     const id = raw_env[0]
     const id_s = thislang_gensym(id)
@@ -46,11 +51,13 @@ function compiled_global_environment_add__root(raw_env: CompiledGlobalEnvironmen
         return id_s
     }
 }
+const id__tmp_args = compiled_global_environment_gensym_do(compiled_global_environment)
 // cogl为compiled_global_environment....的缩写
 const cogl__null_v = compiled_global_environment_add__root(compiled_global_environment, null_v)
 const cogl__apply = compiled_global_environment_add__root(compiled_global_environment, apply)
 const cogl__new_data = compiled_global_environment_add__root(compiled_global_environment, new_data)
 const cogl__new_data_optimized = compiled_global_environment_add__root(compiled_global_environment, new_data_optimized)
+const cogl__jsArray_to_list = compiled_global_environment_add__root(compiled_global_environment, jsArray_to_list)
 function clone_compiled_global_environment(x: CompiledGlobalEnvironment): CompiledGlobalEnvironment {
     return [x[0], x[1].slice(), x[2].slice(), x[3].slice()]
 }
@@ -59,13 +66,10 @@ function scope_inner__replace_environment(scope: CompilerScope, env: EnvLangValG
     return [env, scope[1]]
 }
 function scope_gensym_do(scope: CompilerScope): ThisLang {
-    const id_s = thislang_gensym(scope[1][0])
-    scope[1][0]++
-    return id_s
+    return compiled_global_environment_gensym_do(scope[1])
 }
-function scope_global_add(scope: CompilerScope, x: any): ThisLang {
-    const id_s = thislang_gensym(scope[1][0])
-    scope[1][0]++
+function scope_global_add_do(scope: CompilerScope, x: any): ThisLang {
+    const id_s = compiled_global_environment_gensym_do(scope[1])
     scope[1][1].push(x)
     scope[1][2].push(id_s)
     return id_s
@@ -153,7 +157,7 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
         if (args.length !== 1) {
             throw 'WIP'
         }
-        return scope_global_add(scope, args[0])
+        return scope_global_add_do(scope, args[0])
     } else if (equal_p(f, lambda_form_builtin_systemName)) {
         if (args.length !== 2) {
             throw 'WIP'
@@ -192,6 +196,20 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
             const id = scope_gensym_do(scope)
             pattern_tail_id = id
             inner_env = env_set(inner_env, pattern_tail, id)
+        }
+        const init_pattern_compiled_statements: Array<ThisLang> = []
+        for (const id_k of pattern_list_id) {
+            init_pattern_compiled_statements.push(
+                thislang_statement_var(id_k),
+                thislang_statement_if(
+                    thislang_array_p_empty(id__tmp_args),
+                    (() => { throw 'WIP' })(),
+                    thislang_statement_assign(id_k, thislang_array_do_shift(id__tmp_args))))
+        }
+        if (pattern_tail_id !== null) {
+            init_pattern_compiled_statements.push(
+                thislang_statement_var_init(pattern_tail_id,
+                    thislang_call(cogl__jsArray_to_list(scope), [id__tmp_args])))
         }
         const body_compiled = real_compile_with_environment(scope_inner__replace_environment(scope, inner_env), body)
         return thislang_call(cogl__new_data_optimized(scope), [(() => { throw 'WIP' })()])

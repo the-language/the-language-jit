@@ -32,7 +32,7 @@ function thislang_eval_statements(statements: ThisLang): any {
     return Function(`"use strict";${statements}`)()
 }
 function thislang_eval_expression(expression: ThisLang): any {
-    return thislang_eval_statements(thislang_return(expression))
+    return thislang_eval_statements(thislang_statement_return(expression))
 }
 
 function thislang_gensym(state: Nat): ThisLang {
@@ -42,12 +42,40 @@ function thislang_gensym(state: Nat): ThisLang {
 function thislang_array(xs: Array<ThisLang>): ThisLang {
     return `[${reduce_comma(xs)}]`
 }
+function thislang_array_do_shift(x: ThisLang): ThisLang {
+    return `${x}.shift()`
+}
+function thislang_array_p_empty(x: ThisLang): ThisLang {
+    return `${x}.length===0`
+}
 function thislang_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
     return `${f}(${reduce_comma(args)})`
+}
+function thislang_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
+    return `(${cond}?${then}:${elsev})`
+}
+function thislang_statement_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
+    return `${f}(${reduce_comma(args)});`
+}
+function thislang_statement_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
+    return `if(${cond}){${then}}else{${elsev}}`
 }
 function thislang_lambda(args: Array<ThisLang>, statements: ThisLang): ThisLang {
     return `function(${reduce_comma(args)}){${statements}}`
 }
-function thislang_return(val: ThisLang): ThisLang {
+function thislang_concat_statements(statements: Array<ThisLang>): ThisLang {
+    return statements.join('')
+}
+// 此函数要求function内标识符唯一。
+function thislang_statement_var(id: ThisLang): ThisLang {
+    return `var ${id};`
+}
+function thislang_statement_var_init(id: ThisLang, val: ThisLang): ThisLang {
+    return `var ${id}=${val};`
+}
+function thislang_statement_assign(id: ThisLang, val: ThisLang): ThisLang {
+    return `${id}=${val};`
+}
+function thislang_statement_return(val: ThisLang): ThisLang {
     return `return ${val};`
 }

@@ -37,6 +37,7 @@ type Nat = number
   _p3 判断。一般返回TrueFalseNull。
   _rec 递归。
   k _k 表示Continuation。类似Scheme的Continuation。
+  _do 表示有副作用。
 */
 
 /* !!!Racket Code Generator!!!
