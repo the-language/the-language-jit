@@ -41,6 +41,7 @@ function compiled_global_environment_add__root(raw_env: CompiledGlobalEnvironmen
         if (scope[1][3][id] !== true) {
             scope[1][1].push(x)
             scope[1][2].push(id_s)
+            scope[1][3][id] = true
         }
         return id_s
     }
