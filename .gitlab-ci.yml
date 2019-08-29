@@ -37,7 +37,6 @@ nixos:
         - nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
         - nix-channel --add https://nixos.org/channels/nixos-unstable nixos
         - nix-channel --update
-        - nix-env -u
         - nix-env -iA nixos.gnumake
         - nix-env -iA nixos.nodejs-11_x
         - nix-env -iA nixos.yarn
