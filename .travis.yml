@@ -1,0 +1,36 @@
+language: bash
+matrix:
+  include:
+    - os: windows
+      install:
+        - powershell "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+        - powershell "iex (new-object net.webclient).downloadstring('https://get.scoop.sh')"
+        - export PATH="$PATH:"~/scoop/shims
+        - scoop install make nodejs yarn
+        - for d in ~/scoop/apps/*/*/*/bin/ ~/scoop/apps/*/*/ ~/scoop/apps/*/*/bin/;do export PATH="$PATH:$d";done
+    - os: osx
+      osx_image: xcode10.3
+      addons:
+        homebrew:
+          packages:
+            - make
+            - nodejs
+            - npm
+            - yarn
+    - os: linux
+      dist: bionic
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb https://deb.nodesource.com/node_12.x bionic main'
+              key_url: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
+            - sourceline: 'deb https://dl.yarnpkg.com/debian stable main'
+              key_url: 'https://dl.yarnpkg.com/debian/pubkey.gpg'
+          packages:
+            - make
+            - nodejs
+            - yarn
+script:
+  - make all
+  - make test
