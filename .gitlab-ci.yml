@@ -29,3 +29,19 @@ fedora:
         - make all
         - make test
     retry: 2
+
+nixos:
+    image: nixos/nix
+    stage: test
+    before_script:
+        - nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
+        - nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+        - nix-channel --update
+        - nix-env -u
+        - nix-env -iA nixos.gnumake
+        - nix-env -iA nixos.nodejs-11_x
+        - nix-env -iA nixos.yarn
+    script:
+        - make all
+        - make test
+    retry: 2
