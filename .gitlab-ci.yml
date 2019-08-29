@@ -8,19 +8,8 @@ archlinux:
         - make test
     retry: 2
 
-termux:
-    image: rudloff/termux
-    stage: test
-    before_script:
-        - apt update
-        - apt install -y make nodejs yarn
-    script:
-        - make all
-        - make test
-    retry: 2
-
 voidlinux:
-    image: voidlinux/voidlinux
+    image: zaoqi/voidlinux-ci
     stage: test
     before_script:
         - xbps-install -Sy make nodejs yarn
