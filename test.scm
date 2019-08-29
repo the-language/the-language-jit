@@ -50,3 +50,8 @@
           "()"
           "(a b)"
           "(a b . #(c d #(e)))"))))
+(test-describe '(machinetext-print machinetext-parse)
+    (lambda () (for-each
+        (lambda (x) (writeln-and-eval `(test-check-equal? (machinetext-print (machinetext-parse ,x)) ,x)))
+        '("_"
+          "#^符名^.^太始初核^.._^一類何物^...^化滅^.._..^一類何物^.^列序^_^省略一物^_^構物^.^省略一物^_"))))
