@@ -2,13 +2,13 @@ archlinux:
     image: archlinux/base
     stage: test
     before_script:
-        - pacman -Sy --noconfirm make nodejs yarn
+        - pacman -Syu --noconfirm make nodejs yarn
     script:
         - make all
         - make test
     retry: 2
 
-alpinelinux:
+alpine:
     image: alpine:edge
     stage: test
     before_script:
