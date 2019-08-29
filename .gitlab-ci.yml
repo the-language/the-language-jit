@@ -1,0 +1,7 @@
+all:
+    image: zaoqi/the-language-builder
+    stage: test
+    script:
+        - make all
+        - make test
+    retry: 2
