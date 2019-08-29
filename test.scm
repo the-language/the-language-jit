@@ -28,3 +28,18 @@
           "(h K)"
           "#(h . a)"
           "#(s . #(a . #(i)))"))))
+(test-describe '(simple-print complex-parse complex-print)
+    (lambda () (for-each
+        (lambda (x)
+            (let ((in (car x)) (out (cadr x)))
+                (writeln-and-eval `(test-check-equal? (simple-print (complex-parse ,in)) ,out))
+                (writeln-and-eval `(test-check-equal? (complex-print (complex-parse ,out)) ,in))))
+        '(("構物.符名" "#(符名 太始初核 (一類何物 (化滅 (構物) 省略一物) 符名))")
+          ("&式形" "#(符名 太始初核 (式形 式形))")
+          ("解算:化滅" "#(符名 太始初核 (一類何物 化滅 解算))")
+          ("&+式形" "#(符名 太始初核 (式形 (太始初核 式形)))")
+          ("[_:構物]?" "#(符名 太始初核 (一類何物 化滅 (是非 (一類何物 構物 省略一物))))")
+          ("等同?" "#(符名 太始初核 (一類何物 化滅 (是非 等同)))")
+          ("化滅@應用" "#(符名 太始初核 (一類何物 (化滅 (化滅 . 省略一物) 省略一物) 應用))")
+          (":&>化滅" "#(符名 太始初核 (一類何物 (式形 (化滅 省略一物 化滅)) 特定其物))")
+          ("列序.[_:構物]" "#(符名 太始初核 (一類何物 (化滅 (列序) 省略一物) (一類何物 構物 省略一物)))")))))
