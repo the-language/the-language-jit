@@ -1,7 +1,6 @@
 (define (writeln-and-eval x) (write x) (newline) (eval x))
-(test-describe 'complex-parse
-    (lambda ()
-    (for-each
+(test-describe '(complex-print complex-parse)
+    (lambda () (for-each
         (lambda (x) (writeln-and-eval `(test-check-equal? (complex-print (complex-parse ,x)) ,x)))
         '("&+式形"
           "[[_:構物]?]?"
@@ -14,8 +13,9 @@
           ";(#(序乙) 序甲)"
           "a/b/c/d"
           "a/b"
-          "a/[_:b]/[c/d]"))
-    (for-each
+          "a/[_:b]/[c/d]"))))
+(test-describe '(simple-print complex-parse)
+    (lambda () (for-each
         (lambda (x) (writeln-and-eval `(test-check-equal? (simple-print (complex-parse ,x)) ,x)))
         '("(A B)"
           "#(#(A B) . C)"

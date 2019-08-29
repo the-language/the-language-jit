@@ -1,9 +1,8 @@
 const BiwaScheme = require('@zaoqi/biwascheme')
 const TheLanguage = require('./lang.js')
 BiwaScheme.define_libfunc('test-describe', 2, 2, (ar, intp)=>{
-    BiwaScheme.assert_symbol(ar[0])
     BiwaScheme.assert_closure(ar[1])
-    const name=ar[0].name
+    const name=BiwaScheme.to_write(ar[0])
     const body=BiwaScheme.js_closure(ar[1], intp)
     test(name,()=>{
         body()
