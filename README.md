@@ -1,5 +1,8 @@
 # TheLanguage JIT
 
+[![travis-ci.org build status](https://api.travis-ci.org/the-language/the-language-jit.svg?branch=master)](https://travis-ci.org/the-language/the-language-jit)
+[![pipeline status](https://gitlab.com/the-language/the-language-jit/badges/master/pipeline.svg)](https://gitlab.com/the-language/the-language-jit/commits/master)
+
 以下為zh_*與en_US的混合物。
 
 多層JIT架構。
