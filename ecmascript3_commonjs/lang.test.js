@@ -15,6 +15,8 @@ for(const [k, a, v] of [
     ['complex-parse', 1, TheLanguage.complex_parse],
     ['complex-print', 1, TheLanguage.complex_print],
     ['simple-print', 1, TheLanguage.simple_print],
+    ['machinetext-parse', 1, TheLanguage.machinetext_parse],
+    ['machinetext-print', 1, TheLanguage.machinetext_print],
 ]){
     BiwaScheme.define_libfunc(k, a, a, (ar)=>v.apply(null, ar))
 }

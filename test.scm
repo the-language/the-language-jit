@@ -43,3 +43,10 @@
           ("化滅@應用" "#(符名 太始初核 (一類何物 (化滅 (化滅 . 省略一物) 省略一物) 應用))")
           (":&>化滅" "#(符名 太始初核 (一類何物 (式形 (化滅 省略一物 化滅)) 特定其物))")
           ("列序.[_:構物]" "#(符名 太始初核 (一類何物 (化滅 (列序) 省略一物) (一類何物 構物 省略一物)))")))))
+(test-describe '(complex-print complex-parse machinetext-parse machinetext-print)
+    (lambda () (for-each
+        (lambda (x) (writeln-and-eval `(test-check-equal? (complex-print (machinetext-parse (machinetext-print (complex-parse ,x)))) ,x)))
+        '("構物.符名"
+          "()"
+          "(a b)"
+          "(a b . #(c d #(e)))"))))

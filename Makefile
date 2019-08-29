@@ -7,6 +7,11 @@ clean:
 	rm $(ALL) */node_modules
 .PHONY: clean
 
+test: ecmascript3_commonjs/node_modules
+	$(MAKE) all
+	cd ecmascript3_commonjs && yarn test
+.PHONY: test
+
 typescript/node_modules: typescript/yarn.lock
 	cd typescript && yarn
 
