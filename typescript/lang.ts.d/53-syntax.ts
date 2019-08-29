@@ -332,7 +332,7 @@ function complex_parse(x: string): LangVal {
             return jsArray_to_list([isOrNot_atom, vl])
         } else if (head === '@') {
             const y = readsysname_no_pack_inner_must()
-            return jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, jsArray_to_list([vl, something_atom]), something_atom]), y])
+            return jsArray_to_list([typeAnnotation_atom, jsArray_to_list([function_atom, new_construction(vl, something_atom), something_atom]), y])
         } else if (head === '?') {
             return jsArray_to_list([typeAnnotation_atom, function_atom, jsArray_to_list([isOrNot_atom, vl])])
         } else if (head === '/') {
