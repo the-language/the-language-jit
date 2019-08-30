@@ -42,8 +42,8 @@ fedora:
     image: fedora
     stage: test
     before_script:
-        - curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
-        - dnf install -y make nodejs npm yarn findutils
+        - dnf install -y make nodejs npm findutils
+        - npm i -g yarn
     script:
         - make all
         - make test
@@ -53,10 +53,9 @@ centos:
     image: centos:7
     stage: test
     before_script:
-        - curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
         - yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        - yum install -y make nodejs npm yarn
-        - npm i -g npx
+        - yum install -y make nodejs npm
+        - npm i -g npx yarn
     script:
         - make all
         - make test
@@ -81,10 +80,8 @@ debian:
     image: debian
     stage: test
     before_script:
-        - apt-get update && apt-get install -y curl gnupg
-        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-        - apt-get update && apt-get install -y make nodejs npm yarn
+        - apt-get update && apt-get install -y make nodejs npm
+        - npm i -g yarn
     script:
         - make all
         - make test
@@ -94,10 +91,8 @@ ubuntu:
     image: ubuntu
     stage: test
     before_script:
-        - apt-get update && apt-get install -y curl gnupg
-        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-        - apt-get update && apt-get install -y make nodejs npm yarn
+        - apt-get update && apt-get install -y make nodejs npm
+        - npm i -g npx yarn
     script:
         - make all
         - make test
