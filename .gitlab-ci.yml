@@ -8,6 +8,16 @@ archlinux:
         - make test
     retry: 2
 
+manjaro:
+    image: jonathonf/manjaro
+    stage: test
+    before_script:
+        - pacman -Syu --noconfirm make nodejs npm yarn
+    script:
+        - make all
+        - make test
+    retry: 2
+
 voidlinux:
     image: zaoqi/voidlinux-ci
     stage: test
@@ -32,9 +42,20 @@ fedora:
     image: fedora
     stage: test
     before_script:
-        - curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
-        - dnf install -y make nodejs npm yarn busybox
-        - busybox --install -s
+        - curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
+        - dnf install -y make nodejs npm yarn findutils
+    script:
+        - make all
+        - make test
+    retry: 2
+
+centos:
+    image: centos:7
+    stage: test
+    before_script:
+        - curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
+        - yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        - yum install -y make nodejs npm yarn
     script:
         - make all
         - make test
@@ -50,6 +71,30 @@ nixos:
         - nix-env -iA nixos.gnumake
         - nix-env -iA nixos.nodejs-11_x
         - nix-env -iA nixos.yarn
+    script:
+        - make all
+        - make test
+    retry: 2
+
+debian:
+    image: debian
+    stage: test
+    before_script:
+        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        - apt-get update && apt-get install -y make nodejs npm yarn
+    script:
+        - make all
+        - make test
+    retry: 2
+
+ubuntu:
+    image: ubuntu
+    stage: test
+    before_script:
+        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        - apt-get update && apt-get install -y make nodejs npm yarn
     script:
         - make all
         - make test
