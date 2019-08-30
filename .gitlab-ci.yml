@@ -56,6 +56,7 @@ centos:
         - curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
         - yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         - yum install -y make nodejs npm yarn
+        - npm i -g npx
     script:
         - make all
         - make test
@@ -80,6 +81,7 @@ debian:
     image: debian
     stage: test
     before_script:
+        - apt-get update && apt-get install -y curl
         - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
         - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
         - apt-get update && apt-get install -y make nodejs npm yarn
@@ -92,6 +94,7 @@ ubuntu:
     image: ubuntu
     stage: test
     before_script:
+        - apt-get update && apt-get install -y curl
         - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
         - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
         - apt-get update && apt-get install -y make nodejs npm yarn
