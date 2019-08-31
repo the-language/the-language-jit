@@ -97,3 +97,14 @@ ubuntu:
         - make all
         - make test
     retry: 2
+
+deepin:
+    image: bestwu/deepin
+    stage: test
+    before_script:
+        - apt-get update && apt-get install -y make nodejs npm
+        - npm i -g npx yarn
+    script:
+        - make all
+        - make test
+    retry: 2
