@@ -16,4 +16,6 @@ TheLanguage JIT -> JS/Lua/PHP -> 一些有bug和JIT的CPU (比如: Intel)
 
 ## 自舉
 
-可能可以自舉。自舉結果內的`eval`調用自舉結果本身進行transpile。
+可能可以自舉。
+用[prepack](https://github.com/facebook/prepack)得到自舉結果。
+自舉結果內的`eval`調用自舉結果本身進行transpile。
