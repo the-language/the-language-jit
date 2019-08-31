@@ -100,6 +100,30 @@ function force_all(x: LangVal): [LangVal, Array<LangVal>] {
     return [result, comments]
 }
 
+function force_all_keep_comment(x: LangVal): LangVal {
+    let xs: Array<LangVal> = [x]
+    while (true) {
+        if (delay_p(x)) {
+            x = delay_exec_1(x)
+        } else if (just_p(x)) {
+            x = un_just(x)
+        } else {
+            for (const val of xs) {
+                lang_assert_equal_set_do(val, x)
+            }
+            return x
+        }
+        xs.push(x)
+    }
+}
+
+function ignore_all_comment(x: LangVal): LangVal {
+    while (comment_p(x)) {
+        x = comment_x(x)
+    }
+    return x
+}
+
 function force1(x: LangVal): LangVal {
     x = un_just_all(x)
     if (delay_p(x)) {

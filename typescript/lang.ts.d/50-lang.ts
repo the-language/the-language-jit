@@ -153,7 +153,7 @@ function compile_form(scope: CompilerScope, f: LangVal, raw_args: Array<LangVal>
     }
     const args: Array<ThisLang> = args0
     args.unshift((() => { throw 'WIP: env' })())
-    const f_compiled: string = ((x:any) => { throw 'WIP: macro->func' })(real_compile_with_environment(scope, f))
+    const f_compiled: string = ((x: any) => { throw 'WIP: macro->func' })(real_compile_with_environment(scope, f))
     return compile_apply(scope, f_compiled, args, comments)
 }
 function compile_function_builtin(scope: CompilerScope, f: LangVal, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
