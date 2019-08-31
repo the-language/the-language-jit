@@ -238,12 +238,12 @@ function hole_p(x: LangVal): x is LangValHole {
 }
 function lang_assert_equal_set_do(x: LangVal, y: LangVal): void {
     // 只用于x与y等价的情况，且一般情況下要求y比x簡單。
-    if (x === y) {
-        return
-    }
     if (x === null_v) {
         x = y
         y = null_v
+    }
+    if (x === y) {
+        return
     }
     x[0] = just_t
     x[1] = y
