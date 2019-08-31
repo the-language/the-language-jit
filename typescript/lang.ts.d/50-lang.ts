@@ -63,6 +63,7 @@ const cogl__new_data_optimized = cogl_do(new_data_optimized)
 const cogl__jsArray_to_list = cogl_do(jsArray_to_list)
 const cogl__function_atom = cogl_do(function_atom)
 const cogl__new_data_optimized_closure = cogl_do(new_data_optimized_closure)
+const cogl__evaluate_with_environment = cogl_do(evaluate_with_environment)
 function clone_compiled_global_environment(x: CompiledGlobalEnvironment): CompiledGlobalEnvironment {
     return [x[0], x[1].slice(), x[2].slice(), x[3].slice()]
 }
@@ -145,8 +146,15 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
 function apply(f: LangVal, args: Array<LangVal>): LangVal {
     throw 'WIP'
 }
-function compile_form(scope: CompilerScope, f: LangVal, args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
-    throw 'WIP'
+function compile_form(scope: CompilerScope, f: LangVal, raw_args: Array<LangVal>, comments: Array<LangVal>): ThisLang {
+    const args0: Array<any> = raw_args
+    for (let i = 0; i < args0.length; i++) {
+        args0[i] = scope_global_add_do(scope, args0[i])
+    }
+    const args: Array<ThisLang> = args0
+    args.unshift((() => { throw 'WIP: env' })())
+    const f_compiled: string = ((x:any) => { throw 'WIP: macro->func' })(real_compile_with_environment(scope, f))
+    return compile_apply(scope, f_compiled, args, comments)
 }
 function compile_function_builtin(scope: CompilerScope, f: LangVal, args: Array<ThisLang>, comments: Array<LangVal>): ThisLang {
     throw 'WIP'
