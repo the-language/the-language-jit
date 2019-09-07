@@ -38,6 +38,7 @@ const null_t = LangValType.null_t
 const data_t = LangValType.data_t
 const just_t = LangValType.just_t
 const delay_t = LangValType.delay_t
+type delay_t = LangValType.delay_t
 
 // 以下爲對TypeScript類型系統的hack，因爲不支援遞回的`type`
 
@@ -46,13 +47,13 @@ export type LangValAtom = LangValAtomG<string>
 
 export type LangValConsG<a extends LangVal, b extends LangVal> = [LangValType.construction_t, a, b, false]
 interface LangValConsI extends LangValConsG<LangVal, LangVal> { }
-export type LangValCons = LangValConsI & LangValConsG<any, any>
+export type LangValCons = LangValConsI & LangValConsG<LangValRecHack, LangValRecHack>
 
 export type LangValNull = [LangValType.null_t, false, false, false]
 
-export type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, false | LangValDataOptimized]
+export type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, OrFalse<LangValDataOptimized>]
 interface LangValDataI extends LangValDataG<LangVal, LangVal> { }
-export type LangValData = LangValDataI & LangValDataG<any, any>
+export type LangValData = LangValDataI & LangValDataG<LangValRecHack, LangValRecHack>
 
 const enum LangValDataOptimizedType {
     closure_t,
@@ -62,30 +63,24 @@ export type LangValDataOptimized = LangValDataOptimizedClosure
 
 export type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false, false]
 interface LangValJustI extends LangValJustG<LangVal> { }
-export type LangValJust = LangValJustI & LangValJustG<any>
+export type LangValJust = LangValJustI & LangValJustG<LangValRecHack>
 
-const enum LangValDelayType {
-    normal_t,
-    wait_t,
-}
-export type LangValDelay = LangValDelayNormal | LangValDelayWait
-
-export type LangValDelayNormal = [LangValType.delay_t, LangValDelayType.normal_t, () => LangVal, () => LangVal]
-export type LangValDelayWaitG<a extends LangValDelay, b extends (x: LangVal) => LangVal, c extends () => LangVal> = [LangValType.delay_t, LangValDelayType.wait_t, a, [b, c]]
-interface LangValDelayWaitGI extends LangValDelayWaitG<LangValDelay, (x: LangVal) => LangVal, () => LangVal> { }
-export type LangValDelayWait = LangValDelayWaitGI & [LangValType.delay_t, LangValDelayType.wait_t, any, [(x: LangVal) => LangVal, () => LangVal]]
+export type LangValDelayG<exporter extends () => [Env, LangVal], dependency extends OrFalse<LangValDelay>, exec extends () => LangVal> = [delay_t, exporter, dependency, exec]
+interface LangValDelayI extends LangValDelayG<() => [Env, LangVal], OrFalse<LangValDelay>, () => LangVal> { }
+export type LangValDelay = LangValDelayI & LangValDelayG<() => [Env, LangVal], OrFalse<any>, () => LangVal>
 
 export type LangValJustDelay = LangValJust | LangValDelay
 
 const comment_t = LangValType.comment_t
 export type LangValCommentG<a extends LangVal, b extends LangVal> = [LangValType.comment_t, a, b, false]
 interface LangValCommentI extends LangValCommentG<LangVal, LangVal> { }
-export type LangValComment = LangValCommentI & LangValCommentG<any, any>
+export type LangValComment = LangValCommentI & LangValCommentG<LangValRecHack, LangValRecHack>
 
 const hole_t = LangValType.hole_t
 type LangValHole = [LangValType.hole_t, false, false, false]
 
-export type LangVal = [LangValType, any, any, any] & (LangValAtom | LangValCons | LangValNull | LangValData | LangValJust | LangValDelay | LangValComment | LangValHole)
+type LangValRecHack = [any, any, any, any]
+export type LangVal = LangValRecHack & (LangValAtom | LangValCons | LangValNull | LangValData | LangValJust | LangValDelay | LangValComment | LangValHole)
 
 function new_comment<C extends LangVal, X extends LangVal>(comment: C, x: X): LangValCommentG<C, X> {
     return [comment_t, comment, x, false]
@@ -171,7 +166,7 @@ function data_name<X extends LangVal, Y extends LangVal>(x: LangValDataG<X, Y>):
 function data_list<X extends LangVal, Y extends LangVal>(x: LangValDataG<X, Y>): Y {
     return x[2]
 }
-function data_optimized(x: LangValData): false | LangValDataOptimized {
+function data_optimized(x: LangValData): OrFalse<LangValDataOptimized> {
     return x[3]
 }
 export { New_Data, new_data, data_p, data_name, data_list }
@@ -187,48 +182,29 @@ export { just_p, un_just }
 function delay_p(x: LangVal): x is LangValDelay {
     return x[0] === delay_t
 }
-// Normal: exec為化簡，dis為不化簡。
-function new_delay_normal(exec: () => LangVal, dis: () => LangVal): LangValDelayNormal {
-    return [delay_t, LangValDelayType.normal_t, exec, dis]
-}
-function new_delay_wait(x: LangValDelay, next: (x: LangVal) => LangVal, dis: () => LangVal): LangValDelayWait {
-    return [delay_t, LangValDelayType.wait_t, x, [next, dis]]
-}
-function evaluate(x: LangVal): LangValDelayNormal {
-    return new_delay_normal((() => real_evaluate_with_environment(env_null_v, x)), (() => x))
+function new_delay(exporter: () => [Env, LangVal], dependency: OrFalse<LangValDelay>, exec: () => LangVal): LangValDelay {
+    return [delay_t, exporter, dependency, exec]
 }
 function delay_exec_1(x: LangValDelay): LangVal {
-    if (x[1] === LangValDelayType.wait_t) {
+    if (x[2] !== false) {
         const wait = un_just_all(delay_exec_1(x[2]))
         if (delay_p(wait)) {
             x[2] = wait
             return x
         } else {
-            const next_r = x[3][0](wait)
-            lang_assert_equal_set_do(x, next_r)
-            return next_r
+            x[2] = false
         }
-    } else {
-        const _t: LangValDelayType.normal_t = x[1]
-        const exec_r = x[2]()
-        lang_assert_equal_set_do(x, exec_r)
-        return exec_r
     }
+    const r = x[3]()
+    lang_assert_equal_set_do(x, r)
+    return r
 }
-function delay_display(x: LangValDelay): LangVal {
-    if (x[1] === LangValDelayType.wait_t) {
-        const next__dis = x[3]
-        const dis_r = next__dis[1]()
-        next__dis[1] = () => dis_r
-        return dis_r
-    } else {
-        const _t: LangValDelayType.normal_t = x[1]
-        const dis_r = x[3]()
-        x[3] = () => dis_r
-        return dis_r
-    }
+function delay_export(x: LangValDelay): [Env, LangVal] {
+    const r = x[1]()
+    x[1] = () => r
+    return r
 }
-export { delay_p, new_delay_normal, new_delay_wait, delay_exec_1, delay_display }
+export { delay_p, new_delay, delay_exec_1, delay_export }
 
 function new_hole_do(): LangValHole {
     return [hole_t, false, false, false]

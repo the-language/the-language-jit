@@ -46,7 +46,8 @@ function simple_print(x: LangVal): string {
     } else if (comment_p(x)) {
         return ";(" + simple_print(comment_comment(x)) + " " + simple_print(comment_x(x)) + ")"
     } else if (delay_p(x)) {
-        return "$(" + simple_print(delay_display(x)) + ")"
+        const e = delay_export(x)
+        return `$(${simple_print(env2val(e[0]))} ${simple_print(e[1])})`
     }
     return LANG_ERROR() // 大量重複代碼 simple_print <-> complex_print ]]]
 }
@@ -253,8 +254,15 @@ function complex_parse(x: string): LangVal {
             return k(construction_head(xs), construction_head(x), construction_head(x_d))
         }
     }
-    const readeval = make_read_one("$", evaluate)
-    const readcomment = make_read_two(";", (comment, x) => new_comment(comment, x))
+    const readeval = make_read_two("$", (x, y) => {
+        const e = val2env(x)
+        if (e === false) {
+            return parse_error()
+        } else {
+            return evaluate_with_environment(e, y)
+        }
+    })
+    const readcomment = make_read_two(";", new_comment)
     function a_atom_p(chr: string): boolean {
         if (a_space_p(chr)) {
             return false
@@ -542,7 +550,8 @@ function complex_print(val: LangVal): string {
     } else if (comment_p(x)) {
         return ";(" + complex_print(comment_comment(x)) + " " + complex_print(comment_x(x)) + ")"
     } else if (delay_p(x)) {
-        return "$(" + simple_print(delay_display(x)) + ")"
+        const e = delay_export(x)
+        return `$(${complex_print(env2val(e[0]))} ${complex_print(e[1])})`
     }
     return LANG_ERROR() // 大量重複代碼 simple_print <-> complex_print ]]]
 }

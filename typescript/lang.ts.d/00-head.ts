@@ -28,13 +28,10 @@ function LANG_ASSERT(x: boolean): void {
 
 type OrFalse<x> = x | false
 
-type TrueFalseNull = true | false | null // null一般表示未知。
-
 type Nat = number
 
 /* 一些命名规则
   _p 判断。一般返回boolean。
-  _p3 判断。一般返回TrueFalseNull。
   _rec 递归。
   k _k 表示Continuation。类似Scheme的Continuation。
   _do 表示有副作用。

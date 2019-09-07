@@ -66,12 +66,14 @@ function machinetext_parse(rawstr: string): LangVal {
         } else if (chr === ';') {
             conslike(new_comment)
         } else if (chr === '$') {
-            const x = stack.pop()
-            if (x === undefined) {
-                return parse_error()
-            } else {
-                stack.unshift(evaluate(x))
-            }
+            conslike((x, y) => {
+                const e = val2env(x)
+                if (e === false) {
+                    return parse_error()
+                } else {
+                    return evaluate_with_environment(e, y)
+                }
+            })
         } else if (chr === '_') {
             stack.unshift(null_v)
         } else {
@@ -103,8 +105,8 @@ function machinetext_print(x: LangVal): string {
             } else if (data_p(x)) {
                 conslike(x, '#', data_name, data_list)
             } else if (delay_p(x)) {
-                result += '$'
-                new_stack.push(delay_display(x))
+                const e = delay_export(x)
+                conslike(e, '$', (x) => env2val(x[0]), (x) => x[1])
             } else if (comment_p(x)) {
                 conslike(x, ';', comment_comment, comment_x)
             } else {
