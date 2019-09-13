@@ -39,6 +39,7 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     return thislang_eval_expression(thislang_lambda([args],thislang_concat_statements(init_stats)))(exported)
 }
 
+// 为外部传入编译结果的值的记录。
 // [0]为gensym_state。
 // [1]为值。
 // [2]为ThisLang的标识符。
