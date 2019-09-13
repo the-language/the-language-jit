@@ -55,7 +55,7 @@ centos:
     before_script:
         - yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         - yum install -y make nodejs npm
-        - npm i -g npx yarn
+        - npm i -g yarn
     script:
         - make all
         - make test
@@ -92,7 +92,7 @@ ubuntu:
     stage: test
     before_script:
         - apt-get update && apt-get install -y make nodejs npm
-        - npm i -g npx yarn
+        - npm i -g yarn
     script:
         - make all
         - make test
@@ -103,7 +103,7 @@ deepin:
     stage: test
     before_script:
         - apt-get update && apt-get install -y make nodejs npm
-        - npm i -g npx yarn
+        - npm i -g yarn
     script:
         - make all
         - make test

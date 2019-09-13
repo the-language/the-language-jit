@@ -22,4 +22,4 @@ ecmascript3_commonjs/lang.ts: typescript/lang.ts.d/*.ts typescript/lang.ts.d/ecm
 	cat typescript/lang.ts.d/*.ts typescript/lang.ts.d/ecmascript3.d/*.ts > ecmascript3_commonjs/lang.ts
 
 ecmascript3_commonjs/lang.js: ecmascript3_commonjs/lang.ts ecmascript3_commonjs/node_modules
-	cd ecmascript3_commonjs && npx --no-install tsc
+	cd ecmascript3_commonjs && ./node_modules/.bin/tsc
