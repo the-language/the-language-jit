@@ -42,16 +42,16 @@ type delay_t = LangValType.delay_t
 
 // 以下爲對TypeScript類型系統的hack，因爲不支援遞回的`type`
 
-export type LangValAtomG<a extends string> = [LangValType.atom_t, a, false, false]
+type LangValAtomG<a extends string> = [LangValType.atom_t, a, false, false]
 export type LangValAtom = LangValAtomG<string>
 
-export type LangValConsG<a extends LangVal, b extends LangVal> = [LangValType.construction_t, a, b, false]
+type LangValConsG<a extends LangVal, b extends LangVal> = [LangValType.construction_t, a, b, false]
 interface LangValConsI extends LangValConsG<LangVal, LangVal> { }
 export type LangValCons = LangValConsI & LangValConsG<LangValRecHack, LangValRecHack>
 
 export type LangValNull = [LangValType.null_t, false, false, false]
 
-export type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, OrFalse<LangValDataOptimized>]
+type LangValDataG<a extends LangVal, b extends LangVal> = [LangValType.data_t, a, b, OrFalse<LangValDataOptimized>]
 interface LangValDataI extends LangValDataG<LangVal, LangVal> { }
 export type LangValData = LangValDataI & LangValDataG<LangValRecHack, LangValRecHack>
 
@@ -61,23 +61,23 @@ const enum LangValDataOptimizedType {
 export type LangValDataOptimizedClosure = [LangValDataOptimizedType.closure_t, (args: Array<LangVal>) => LangVal]
 export type LangValDataOptimized = LangValDataOptimizedClosure
 
-export type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false, false]
+type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false, false]
 interface LangValJustI extends LangValJustG<LangVal> { }
 export type LangValJust = LangValJustI & LangValJustG<LangValRecHack>
 
-export type LangValDelayG<exporter extends () => [Env, LangVal], dependency extends OrFalse<LangValDelay>, exec extends () => LangVal> = [delay_t, exporter, dependency, exec]
+type LangValDelayG<exporter extends () => [Env, LangVal], dependency extends OrFalse<LangValDelay>, exec extends () => LangVal> = [delay_t, exporter, dependency, exec]
 interface LangValDelayI extends LangValDelayG<() => [Env, LangVal], OrFalse<LangValDelay>, () => LangVal> { }
 export type LangValDelay = LangValDelayI & LangValDelayG<() => [Env, LangVal], OrFalse<any>, () => LangVal>
 
 export type LangValJustDelay = LangValJust | LangValDelay
 
 const comment_t = LangValType.comment_t
-export type LangValCommentG<a extends LangVal, b extends LangVal> = [LangValType.comment_t, a, b, false]
+type LangValCommentG<a extends LangVal, b extends LangVal> = [LangValType.comment_t, a, b, false]
 interface LangValCommentI extends LangValCommentG<LangVal, LangVal> { }
 export type LangValComment = LangValCommentI & LangValCommentG<LangValRecHack, LangValRecHack>
 
 const hole_t = LangValType.hole_t
-type LangValHole = [LangValType.hole_t, false, false, false]
+export type LangValHole = [LangValType.hole_t, false, false, false]
 
 type LangValRecHack = [any, any, any, any]
 export type LangVal = LangValRecHack & (LangValAtom | LangValCons | LangValNull | LangValData | LangValJust | LangValDelay | LangValComment | LangValHole)
@@ -123,7 +123,7 @@ function atom_equal_p(x: LangValAtom, y: LangValAtom): boolean {
         return false
     }
 }
-export { New_Atom, new_atom, atom_p, un_atom, atom_equal_p }
+export { new_atom, atom_p, un_atom, atom_equal_p }
 
 type New_Construction<X extends LangVal, Y extends LangVal> = LangValConsG<X, Y>
 function new_construction<X extends LangVal, Y extends LangVal>(x: X, y: Y): New_Construction<X, Y> {
@@ -138,14 +138,14 @@ function construction_head<X extends LangVal, Y extends LangVal>(x: LangValConsG
 function construction_tail<X extends LangVal, Y extends LangVal>(x: LangValConsG<X, Y>): Y {
     return x[2]
 }
-export { New_Construction, new_construction, construction_p, construction_head, construction_tail }
+export { new_construction, construction_p, construction_head, construction_tail }
 
 type Null_V = LangValNull
 const null_v: Null_V = [null_t, false, false, false]
 function null_p(x: LangVal): x is LangValNull {
     return x[0] === null_t
 }
-export { Null_V, null_v, null_p }
+export { null_v, null_p }
 
 type New_Data<X extends LangVal, Y extends LangVal> = LangValDataG<X, Y>
 function new_data<X extends LangVal, Y extends LangVal>(x: X, y: Y): New_Data<X, Y> {
@@ -169,7 +169,7 @@ function data_list<X extends LangVal, Y extends LangVal>(x: LangValDataG<X, Y>):
 function data_optimized(x: LangValData): OrFalse<LangValDataOptimized> {
     return x[3]
 }
-export { New_Data, new_data, data_p, data_name, data_list }
+export { new_data, data_p, data_name, data_list }
 
 function just_p(x: LangVal): x is LangValJust {
     return x[0] === just_t

@@ -2,7 +2,7 @@
   "devDependencies": {
     "@zaoqi/biwascheme": "^0.6.9-4-ecbc0c5c4fd8b90aa64bfbf0214483220e71eea1",
     "jest": "^24.9.0",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.3"
   },
   "scripts": {
     "test": "jest"
