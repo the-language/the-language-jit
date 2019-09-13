@@ -38,9 +38,27 @@ function thislang_eval_expression(expression: ThisLang): any {
 function thislang_gensym(state: Nat): ThisLang {
     return `v${state.toString(36)}`
 }
+function thislang_id(x:string):ThisLang{
+    let r=''
+    for(let i=0;i<x.length;i++){
+        const c=x[i]
+        if(('a'<=c&&c<='z')||('A'<=c&&c<='Z')||('0'<=c&&c<='9')||(c==='_')){
+            r+=c
+        }else{
+            r+=`$${c.charCodeAt(0).toString(36)}$` // WIP 检查 charCodeAt 和 这里的for...of 是否配套
+        }
+    }
+    return r
+}
 
 function thislang_array(xs: Array<ThisLang>): ThisLang {
     return `[${reduce_comma(xs)}]`
+}
+function thislang_number(x:number):ThisLang{
+    return x.toString()
+}
+function thislang_array_lookup(xs: ThisLang, k:ThisLang):ThisLang{
+    return `${xs}[${k}]`
 }
 function thislang_array_do_shift(x: ThisLang): ThisLang {
     return `${x}.shift()`
@@ -63,9 +81,11 @@ function thislang_statement_if(cond: ThisLang, then: ThisLang, elsev: ThisLang):
 function thislang_lambda(args: Array<ThisLang>, statements: ThisLang): ThisLang {
     return `function(${reduce_comma(args)}){${statements}}`
 }
+
 function thislang_concat_statements(statements: Array<ThisLang>): ThisLang {
     return statements.join('')
 }
+
 // 此函数要求function内标识符唯一。
 function thislang_statement_var(id: ThisLang): ThisLang {
     return `var ${id};`
