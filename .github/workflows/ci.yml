@@ -1,0 +1,18 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04, windows-2016, windows-2019, macOS-10.14]
+        node-version: [6, 8, 10, 12]
+    steps:
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+    - uses: actions/checkout@v1
+    - name: Build and test
+      run: |
+        make all
+        make test
