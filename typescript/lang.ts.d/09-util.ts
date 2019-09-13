@@ -59,7 +59,7 @@ function un_just_all(raw: LangVal): LangVal {
     }
 
     for (const v of xs) {
-        lang_assert_equal_set_do(v, x)
+        unsafe__lang_assert_equal_set_do(v, x)
     }
 
     return x
@@ -71,7 +71,7 @@ function force_all_with__coments_ref(comments: Array<LangVal>, x: LangVal): Lang
     while (true) {
         if (comment_p(x)) {
             for (const val of xs) {
-                lang_assert_equal_set_do(val, x)
+                unsafe__lang_assert_equal_set_do(val, x)
             }
             comments.push(comment_comment(x))
             x = comment_x(x)
@@ -82,7 +82,7 @@ function force_all_with__coments_ref(comments: Array<LangVal>, x: LangVal): Lang
             x = un_just(x)
         } else {
             for (const val of xs) {
-                lang_assert_equal_set_do(val, x)
+                unsafe__lang_assert_equal_set_do(val, x)
             }
             return x
         }
@@ -109,7 +109,7 @@ function force_all_keep_comment(x: LangVal): LangVal {
             x = un_just(x)
         } else {
             for (const val of xs) {
-                lang_assert_equal_set_do(val, x)
+                unsafe__lang_assert_equal_set_do(val, x)
             }
             return x
         }

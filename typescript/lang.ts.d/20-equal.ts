@@ -30,7 +30,7 @@ function jsbool_no_force_isomorphism_p(x: LangVal, y: LangVal): boolean {
     }
     function end_2<T extends LangVal>(xx: T, yy: T, f1: (x: T) => LangVal, f2: (x: T) => LangVal): boolean {
         if (jsbool_no_force_isomorphism_p(f1(xx), f1(yy)) && jsbool_no_force_isomorphism_p(f2(xx), f2(yy))) {
-            lang_assert_equal_set_do(xx, yy)
+            unsafe__lang_assert_equal_set_do(xx, yy)
             return true
         } else {
             return false
@@ -38,8 +38,8 @@ function jsbool_no_force_isomorphism_p(x: LangVal, y: LangVal): boolean {
     }
     if (null_p(x)) {
         if (!null_p(y)) { return false }
-        lang_assert_equal_set_do(x, null_v)
-        lang_assert_equal_set_do(y, null_v)
+        unsafe__lang_assert_equal_set_do(x, null_v)
+        unsafe__lang_assert_equal_set_do(y, null_v)
         return true
     } else if (atom_p(x)) {
         if (!atom_p(y)) { return false }
@@ -84,7 +84,7 @@ function equal_p_inner(x: LangVal, y: LangVal, modifyed: [boolean]): boolean {
             if (p[0]) {
                 modifyed[0] = true
             } else {
-                lang_assert_equal_set_do(xx, yy)
+                unsafe__lang_assert_equal_set_do(xx, yy)
             }
             return true
         } else {
@@ -93,8 +93,8 @@ function equal_p_inner(x: LangVal, y: LangVal, modifyed: [boolean]): boolean {
     }
     if (null_p(x)) {
         if (!null_p(y)) { return false }
-        lang_assert_equal_set_do(x, null_v)
-        lang_assert_equal_set_do(y, null_v)
+        unsafe__lang_assert_equal_set_do(x, null_v)
+        unsafe__lang_assert_equal_set_do(y, null_v)
         return true
     } else if (atom_p(x)) {
         if (!atom_p(y)) { return false }

@@ -117,7 +117,7 @@ function atom_equal_p(x: LangValAtom, y: LangValAtom): boolean {
         return true
     }
     if (un_atom(x) === un_atom(y)) {
-        lang_assert_equal_set_do(x, y)
+        unsafe__lang_assert_equal_set_do(x, y)
         return true
     } else {
         return false
@@ -196,7 +196,7 @@ function delay_exec_1(x: LangValDelay): LangVal {
         }
     }
     const r = x[3]()
-    lang_assert_equal_set_do(x, r)
+    unsafe__lang_assert_equal_set_do(x, r)
     return r
 }
 function delay_export(x: LangValDelay): [Env, LangVal] {
@@ -212,7 +212,8 @@ function new_hole_do(): LangValHole {
 function hole_p(x: LangVal): x is LangValHole {
     return x[0] === hole_t
 }
-function lang_assert_equal_set_do(x: LangVal, y: LangVal): void {
+function unsafe__lang_assert_equal_set_do(x: LangVal, y: LangVal): void {
+    // 当y是just或delay且x和y相等时，会出现问题。所以unsafe。
     // 只用于x与y等价的情况，且一般情況下要求y比x簡單。
     if (x === null_v) {
         x = y
