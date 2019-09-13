@@ -23,20 +23,20 @@ function evaluate_with_environment(env: Env, x: LangVal): LangVal {
 
 function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     // WIP delay未正確處理(影響較小)
-    const local_scope:CompilerScope=[env_null_v, clone_compiled_global_environment(compiled_global_environment)]
+    const local_scope: CompilerScope = [env_null_v, clone_compiled_global_environment(compiled_global_environment)]
     env_foreach(env, (k, v) => {
-        const v_id=scope_global_add_do(local_scope, v)
-        local_scope[0]=env_set(local_scope[0],k,v_id)
+        const v_id = scope_global_add_do(local_scope, v)
+        local_scope[0] = env_set(local_scope[0], k, v_id)
     })
-    const r=real_compile_with_environment(local_scope,x)
-    const args=thislang_id('args')
-    const init_stats:Array<ThisLang>=[]
-    for(let i=0;i<local_scope[1][2].length;i++){
-        init_stats.push(thislang_statement_var_init(local_scope[1][2][i],thislang_array_lookup(args,thislang_number(i))))
+    const r = real_compile_with_environment(local_scope, x)
+    const args = thislang_id('args')
+    const init_stats: Array<ThisLang> = []
+    for (let i = 0; i < local_scope[1][2].length; i++) {
+        init_stats.push(thislang_statement_var_init(local_scope[1][2][i], thislang_array_lookup(args, thislang_number(i))))
     }
     init_stats.push(thislang_statement_return(r))
-    const exported:Array<any>=local_scope[1][1]
-    return thislang_eval_expression(thislang_lambda([args],thislang_concat_statements(init_stats)))(exported)
+    const exported: Array<any> = local_scope[1][1]
+    return thislang_eval_expression(thislang_lambda([args], thislang_concat_statements(init_stats)))(exported)
 }
 
 // 为外部传入编译结果的值的记录。
