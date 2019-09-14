@@ -26,10 +26,14 @@ lauxlib.luaL_requiref(L, fengari.to_luastring("js"), lua_interop.luaopen_js, 0)
 assert.equal(lauxlib.luaL_loadfile(L, 'lang.lua'),0)
 lua.lua_call(L, 0, 1)
 const TheLanguage = lua_interop.tojs(L, -1)
+lua.lua_pop(L, 1)
 for(const [k, _] of TheLanguage) {
     const raw_v = TheLanguage.get(k)
     let v = raw_v
-    if(typeof v === 'function'){
+    lua_interop.push(L, raw_v)
+    const typ = fengari.to_jsstring(lauxlib.luaL_typename(L, -1))
+    lua.lua_pop(L, 1)
+    if(typ === 'function'){
         v = (...args)=>(x=>x).call.call(raw_v, ...args)
     }
     exports[k] = v
