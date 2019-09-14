@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "esnext",
     "lib": ["esnext"],
-    "strict": true
+    "strict": true,
+    "types" : [],
   },
   "tstl": {
     "luaTarget": "JIT"

@@ -7,10 +7,16 @@ clean:
 	rm $(ALL) */node_modules
 .PHONY: clean
 
-test: ecmascript3_commonjs/node_modules
-	$(MAKE) all
-	cd ecmascript3_commonjs && yarn test
+test: all test_ecmascript3
 .PHONY: test
+
+test_ecmascript3: all ecmascript3_commonjs/node_modules
+	cd ecmascript3_commonjs && yarn test
+.PHONY: test_ecmascript3
+
+test_lua: all lua/node_modules
+	cd lua && yarn test
+.PHONY: test_lua
 
 typescript/node_modules: typescript/yarn.lock
 	cd typescript && yarn && touch node_modules/
@@ -21,14 +27,14 @@ ecmascript3_commonjs/node_modules: ecmascript3_commonjs/yarn.lock
 lua/node_modules: lua/yarn.lock
 	cd lua && yarn && touch node_modules/
 
-lua/lang.ts: typescript/lang.ts.d/*.ts typescript/lang.ts.d/lua.d/*.ts
-	cat typescript/lang.ts.d/*.ts typescript/lang.ts.d/lua.d/*.ts > lua/lang.ts
+lua/lang.ts: typescript/lang.ts.d/lua.d/*.ts typescript/lang.ts.d/*.ts
+	cat typescript/lang.ts.d/lua.d/*.ts typescript/lang.ts.d/*.ts > lua/lang.ts
 
 lua/lang.lua: lua/tsconfig.json lua/lang.ts lua/node_modules
 	cd lua && ./node_modules/.bin/tstl
 
-ecmascript3_commonjs/lang.ts: typescript/lang.ts.d/*.ts typescript/lang.ts.d/ecmascript3.d/*.ts
-	cat typescript/lang.ts.d/*.ts typescript/lang.ts.d/ecmascript3.d/*.ts > ecmascript3_commonjs/lang.ts
+ecmascript3_commonjs/lang.ts: typescript/lang.ts.d/ecmascript3.d/*.ts typescript/lang.ts.d/*.ts
+	cat typescript/lang.ts.d/ecmascript3.d/*.ts typescript/lang.ts.d/*.ts > ecmascript3_commonjs/lang.ts
 
 ecmascript3_commonjs/lang.js: ecmascript3_commonjs/tsconfig.json ecmascript3_commonjs/lang.ts ecmascript3_commonjs/node_modules
 	cd ecmascript3_commonjs && ./node_modules/.bin/tsc
