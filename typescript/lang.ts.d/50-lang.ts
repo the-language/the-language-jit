@@ -20,6 +20,7 @@
 function evaluate_with_environment(env: Env, x: LangVal): LangVal {
     return new_delay((() => [env, x]), false, () => real_evaluate_with_environment(env, x))
 }
+export { evaluate_with_environment }
 
 function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     // WIP delay未正確處理(影響較小)
