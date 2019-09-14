@@ -29,7 +29,7 @@ function reduce_comma(xs: Array<string>): string {
 }
 
 function thislang_eval_statements(statements: ThisLang): any {
-    return Function(`"use strict";${statements}`)()
+    return (new Function(`"use strict";${statements}`))()
 }
 function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_statement_return(expression))
