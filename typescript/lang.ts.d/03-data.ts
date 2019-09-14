@@ -154,7 +154,7 @@ type New_Data<X extends LangVal, Y extends LangVal> = LangValDataG<X, Y>
 function new_data<X extends LangVal, Y extends LangVal>(x: X, y: Y): New_Data<X, Y> {
     return [data_t, x, y, false]
 }
-function new_data_optimized<X extends LangVal, Y extends LangVal>(x: X, y: Y, o: LangValDataOptimized): New_Data<X, Y> {
+function new_data_optimized<X extends LangVal, Y extends LangVal>(x: X, y: Y, o: OrFalse<LangValDataOptimized>): New_Data<X, Y> {
     return [data_t, x, y, o]
 }
 function new_data_optimized_closure<X extends LangVal>(x: X, f: (args: Array<LangVal>) => LangVal): New_Data<Function_Atom, X> {

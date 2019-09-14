@@ -93,6 +93,20 @@ function force_all_with__coments_ref(comments: Array<LangVal>, x: LangVal): Lang
 function force_all_ignore_comment(x: LangVal): LangVal {
     return force_all_with__coments_ref([], x)
 }
+export { force_all_ignore_comment }
+
+function force_all_rec_ignore_comment(x: LangVal): LangVal {
+    x=force_all_ignore_comment(x)
+    if(null_p(x)||atom_p(x)){
+        return x
+    }else if(construction_p(x)){
+        return new_construction(force_all_rec_ignore_comment(construction_head(x)),force_all_rec_ignore_comment(construction_tail(x)))
+    }else if(data_p(x)){
+        return new_data_optimized(force_all_rec_ignore_comment(data_name(x)),force_all_rec_ignore_comment(data_list(x)),data_optimized(x))
+    }
+    return LANG_ERROR()
+}
+export {force_all_rec_ignore_comment}
 
 function force_all(x: LangVal): [LangVal, Array<LangVal>] {
     const comments: Array<LangVal> = []
@@ -131,5 +145,6 @@ function force1(x: LangVal): LangVal {
     }
     return x
 }
+export { force1 }
 
 // 相對獨立的部分。對內建數據結構的簡單處理 }}}

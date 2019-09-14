@@ -17,7 +17,15 @@ for(const [k, a, v] of [
     ['simple-print', 1, TheLanguage.simple_print],
     ['machinetext-parse', 1, TheLanguage.machinetext_parse],
     ['machinetext-print', 1, TheLanguage.machinetext_print],
+    ['evaluate-with-environment', 2, TheLanguage.evaluate_with_environment],
+    ['force-all-rec-ignore-comment', 1, TheLanguage.force_all_rec_ignore_comment],
 ]){
     BiwaScheme.define_libfunc(k, a, a, (ar)=>v.apply(null, ar))
+}
+for(const [k, v] of [
+    ['null-v', TheLanguage.null_v],
+    ['environment-null-v', TheLanguage.env_null_v],
+]){
+    BiwaScheme.TopEnv[k] = v
 }
 BiwaScheme.run_file('../test.scm')
