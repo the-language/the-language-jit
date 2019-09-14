@@ -1,14 +1,10 @@
 language: bash
 matrix:
   include:
-### windows版本损坏：`URL https://downloads.sourceforge.net/project/ezwinports/make-4.2.1-without-guile-w32-bin.zip is not valid`
-#    - os: windows
-#      install:
-#        - powershell "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
-#        - powershell "iex (new-object net.webclient).downloadstring('https://get.scoop.sh')"
-#        - export PATH="$PATH:"~/scoop/shims
-#        - scoop install make nodejs yarn
-#        - for d in ~/scoop/apps/*/*/*/bin/ ~/scoop/apps/*/*/ ~/scoop/apps/*/*/bin/;do export PATH="$PATH:$d";done
+    - os: windows
+      install:
+        - choco install make nodejs yarn
+        - export PATH="$PATH:/c/Program Files (x86)/Yarn/bin:/c/Program Files/nodejs" # yarn & nodejs doesn't support `Shimming`
     - os: osx
       osx_image: xcode10.3
       addons:
@@ -18,19 +14,26 @@ matrix:
             - nodejs
             - npm
             - yarn
+    - os: osx
+      osx_image: xcode11
+      addons:
+        homebrew:
+          packages:
+            - make
+            - nodejs
+            - npm
+            - yarn
     - os: linux
       dist: bionic
-      sudo: required
       addons:
         apt:
           sources:
-            - sourceline: 'deb https://deb.nodesource.com/node_12.x bionic main'
-              key_url: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
             - sourceline: 'deb https://dl.yarnpkg.com/debian stable main'
               key_url: 'https://dl.yarnpkg.com/debian/pubkey.gpg'
           packages:
             - make
             - nodejs
+            - npm
             - yarn
 script:
   - make all
