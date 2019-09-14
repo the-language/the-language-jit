@@ -5,8 +5,6 @@
         "newLine": "lf",
         "target": "ES3",
         "types" : [],
-        "noImplicitUseStrict": true,
-        "alwaysStrict": false,
         "incremental": true,
 
         "strict": true,
