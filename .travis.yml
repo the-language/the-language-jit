@@ -1,13 +1,14 @@
 language: bash
 matrix:
   include:
-    - os: windows
-      install:
-        - powershell "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
-        - powershell "iex (new-object net.webclient).downloadstring('https://get.scoop.sh')"
-        - export PATH="$PATH:"~/scoop/shims
-        - scoop install make nodejs yarn
-        - for d in ~/scoop/apps/*/*/*/bin/ ~/scoop/apps/*/*/ ~/scoop/apps/*/*/bin/;do export PATH="$PATH:$d";done
+### windows版本损坏：`URL https://downloads.sourceforge.net/project/ezwinports/make-4.2.1-without-guile-w32-bin.zip is not valid`
+#    - os: windows
+#      install:
+#        - powershell "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+#        - powershell "iex (new-object net.webclient).downloadstring('https://get.scoop.sh')"
+#        - export PATH="$PATH:"~/scoop/shims
+#        - scoop install make nodejs yarn
+#        - for d in ~/scoop/apps/*/*/*/bin/ ~/scoop/apps/*/*/ ~/scoop/apps/*/*/bin/;do export PATH="$PATH:$d";done
     - os: osx
       osx_image: xcode10.3
       addons:
