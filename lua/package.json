@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "fengari": "^0.1.4",
+    "fengari-interop": "^0.1.2",
+    "typescript-to-lua": "^0.27.1"
+  }
+}

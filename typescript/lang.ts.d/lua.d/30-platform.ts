@@ -19,8 +19,16 @@
 
 type ThisLang = string
 
+declare function load(func: () => string | null | undefined): any
+declare function assert(...args: any[]): any
+
 function thislang_eval_statements(statements: ThisLang): any {
-    return (new Function(`"use strict";${statements}`))()
+    let s: string | null = statements
+    return assert(load(() => {
+        const r = s
+        s = null
+        return r
+    }))()
 }
 function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_statement_return(expression))
@@ -33,60 +41,59 @@ function thislang_id(x: string): ThisLang {
     let r = ''
     for (let i = 0; i < x.length; i++) {
         const c = x[i]
-        if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || (c === '_')) {
+        if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')) {
             r += c
         } else {
-            r += `$${c.charCodeAt(0).toString(36)}$`
+            r += `_${c.charCodeAt(0).toString(36)}_`
         }
     }
     return r
 }
 
 function thislang_array(xs: Array<ThisLang>): ThisLang {
-    return `[${reduce_comma(xs)}]`
+    return `{${reduce_comma(xs)}}`
 }
 function thislang_number(x: number): ThisLang {
     return x.toString()
 }
 function thislang_array_lookup(xs: ThisLang, k: ThisLang): ThisLang {
-    return `${xs}[${k}]`
+    return `${xs}[${k}+1]`
 }
 function thislang_array_do_shift(x: ThisLang): ThisLang {
-    return `${x}.shift()`
+    return `table.remove(${x},1)`
 }
 function thislang_array_p_empty(x: ThisLang): ThisLang {
-    return `${x}.length===0`
+    return `#${x}===0`
 }
 function thislang_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
     return `${f}(${reduce_comma(args)})`
 }
 function thislang_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
-    return `(${cond}?${then}:${elsev})`
+    return `(function()if ${cond} then return ${then} else return ${elsev} end end)()`
 }
 function thislang_statement_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
-    return `${f}(${reduce_comma(args)});`
+    return `${f}(${reduce_comma(args)})`
 }
 function thislang_statement_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
-    return `if(${cond}){${then}}else{${elsev}}`
+    return `if ${cond} then ${then} else ${elsev} end`
 }
 function thislang_lambda(args: Array<ThisLang>, statements: ThisLang): ThisLang {
-    return `(function(${reduce_comma(args)}){${statements}})`
+    return `(function(${reduce_comma(args)}) ${statements} end)`
 }
 
 function thislang_concat_statements(statements: Array<ThisLang>): ThisLang {
     return statements.join('')
 }
 
-// 此函数要求function内标识符唯一。
 function thislang_statement_var(id: ThisLang): ThisLang {
-    return `var ${id};`
+    return `local ${id}=nil`
 }
 function thislang_statement_var_init(id: ThisLang, val: ThisLang): ThisLang {
-    return `var ${id}=${val};`
+    return `local ${id}=${val}`
 }
 function thislang_statement_assign(id: ThisLang, val: ThisLang): ThisLang {
-    return `${id}=${val};`
+    return `${id}=${val}`
 }
 function thislang_statement_return(val: ThisLang): ThisLang {
-    return `return ${val};`
+    return `return ${val}`
 }

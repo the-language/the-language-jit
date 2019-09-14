@@ -17,6 +17,15 @@
 
 */
 
+function reduce_comma(xs: Array<string>): string {
+    if (xs.length === 0) { return "" }
+    let result = xs[0]
+    for (let i = 1; i < xs.length; i++) {
+        result += `,${xs[i]}`
+    }
+    return result
+}
+
 function LANG_ERROR(): never {
     throw "TheLanguage PANIC"
 }
