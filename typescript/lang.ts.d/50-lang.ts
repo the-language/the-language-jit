@@ -26,8 +26,8 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     // WIP delay未正確處理(影響較小)
     const local_scope: CompilerScope = [env_null_v, clone_compiled_global_environment(compiled_global_environment)]
     env_foreach(env, (k, v) => {
-        const v_id = scope_global_add_do(local_scope, v)
-        local_scope[0] = env_set(local_scope[0], k, v_id)
+        const v_added = compiled_global_environment_add__root_do(local_scope[1], v)
+        local_scope[0] = env_set(local_scope[0], k, v_added)
     })
     const r = real_compile_with_environment(local_scope, x)
     const args = thislang_id('args')
@@ -83,8 +83,8 @@ const cogl__evaluate_with_environment = cogl_do(evaluate_with_environment)
 function clone_compiled_global_environment(x: CompiledGlobalEnvironment): CompiledGlobalEnvironment {
     return [x[0], x[1].slice(), x[2].slice(), x[3].slice()]
 }
-type CompilerScope = [EnvLangValG<ThisLang>, CompiledGlobalEnvironment]
-function scope_inner__replace_environment(scope: CompilerScope, env: EnvLangValG<ThisLang>): CompilerScope {
+type CompilerScope = [EnvLangValG<(x: CompilerScope) => ThisLang>, CompiledGlobalEnvironment]
+function scope_inner__replace_environment(scope: CompilerScope, env: EnvLangValG<(x: CompilerScope) => ThisLang>): CompilerScope {
     return [env, scope[1]]
 }
 function scope_gensym_do(scope: CompilerScope): ThisLang {
@@ -101,7 +101,7 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
     const x__comments = force_all(raw_input)
     let x = x__comments[0]
     const comments = x__comments[1]
-    if (null_p(raw_input)) {
+    if (null_p(x)) {
         return cogl__null_v(scope)
     } else if (construction_p(x)) {
         const xs = []
@@ -156,6 +156,13 @@ function real_compile_with_environment(scope: CompilerScope, raw_input: LangVal)
         } else {
             throw 'WIP'
         }
+    } else if (atom_p(x)) {
+        const v: OrFalse<(x: CompilerScope) => ThisLang> = env_get(scope[0], x, false)
+        if (v === false) {
+            throw 'WIP'
+        } else {
+            return v(scope)
+        }
     }
     throw 'WIP'
 }
@@ -205,7 +212,7 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
         for (let i = pattern_list.length - 1; i >= 0; i--) {
             forced_pattern = new_construction(pattern_list[i], forced_pattern)
         }
-        let inner_upvals_env: EnvLangValG<ThisLang> = env_null_v
+        let inner_upvals_env: EnvLangValG<(x: CompilerScope) => ThisLang> = env_null_v
         env_foreach(scope[0], (k, v) => {
             for (const pat_k of pattern_list) {
                 if (equal_p(pat_k, k)) {
@@ -222,13 +229,13 @@ function compile_form_builtin(scope: CompilerScope, f: LangVal, args: Array<Lang
         for (const pat_k of pattern_list) {
             const id = scope_gensym_do(scope)
             pattern_list_id.push(id)
-            inner_env = env_set(inner_env, pat_k, id)
+            inner_env = env_set(inner_env, pat_k, (_) => id)
         }
         let pattern_tail_id: ThisLang | null = null
         if (pattern_tail !== null) {
             const id = scope_gensym_do(scope)
             pattern_tail_id = id
-            inner_env = env_set(inner_env, pattern_tail, id)
+            inner_env = env_set(inner_env, pattern_tail, (_) => id)
         }
         const compiled_statements: Array<ThisLang> = []
         for (const id_k of pattern_list_id) {
