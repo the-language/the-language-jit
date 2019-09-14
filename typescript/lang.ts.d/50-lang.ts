@@ -37,7 +37,8 @@ function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
     }
     init_stats.push(thislang_statement_return(r))
     const exported: Array<any> = local_scope[1][1]
-    return thislang_eval_expression(thislang_lambda([args], thislang_concat_statements(init_stats)))(exported)
+    const f: (e: Array<any>) => LangVal = thislang_eval_expression(thislang_lambda([args], thislang_concat_statements(init_stats)))
+    return f(exported)
 }
 
 // 为外部传入编译结果的值的记录。

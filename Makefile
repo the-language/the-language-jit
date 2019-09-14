@@ -1,13 +1,13 @@
-ALL = ecmascript3_commonjs/lang.js
+ALL = ecmascript3_commonjs/lang.js lua/lang.lua
 
 all: $(ALL)
 .PHONY: all
 
 clean:
-	rm $(ALL) */node_modules
+	rm -fr $(ALL) */node_modules
 .PHONY: clean
 
-test: all test_ecmascript3
+test: all test_ecmascript3 test_lua
 .PHONY: test
 
 test_ecmascript3: all ecmascript3_commonjs/node_modules

@@ -26,11 +26,12 @@ declare function assert(...args: any[]): any
 
 function thislang_eval_statements(statements: ThisLang): any {
     let s: string | null = statements
-    return assert(load(() => {
+    const f: () => any = assert(load(() => {
         const r = s
         s = null
         return r
-    }))()
+    }))
+    return f()
 }
 function thislang_eval_expression(expression: ThisLang): any {
     return thislang_eval_statements(thislang_statement_return(expression))

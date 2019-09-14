@@ -3,7 +3,7 @@ matrix:
   include:
     - os: windows
       install:
-        - choco install make nodejs yarn
+        - until choco install make nodejs yarn; do echo; done
         - export PATH="$PATH:/c/Program Files (x86)/Yarn/bin:/c/Program Files/nodejs" # yarn & nodejs doesn't support `Shimming`
     - os: osx
       osx_image: xcode10.3
@@ -36,5 +36,5 @@ matrix:
             - npm
             - yarn
 script:
-  - make all
-  - make test
+  - make -j8 all
+  - make -j8 test

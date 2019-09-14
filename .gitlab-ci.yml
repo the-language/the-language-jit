@@ -4,8 +4,8 @@ archlinux:
     before_script:
         - pacman -Syu --noconfirm make nodejs npm yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 manjaro:
@@ -14,8 +14,8 @@ manjaro:
     before_script:
         - pacman -Syu --noconfirm make nodejs npm yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 voidlinux:
@@ -24,8 +24,8 @@ voidlinux:
     before_script:
         - xbps-install -Sy make nodejs yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 alpine:
@@ -34,8 +34,8 @@ alpine:
     before_script:
         - apk add make nodejs npm yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 fedora:
@@ -45,8 +45,8 @@ fedora:
         - dnf install -y make nodejs npm findutils
         - npm i -g yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 centos:
@@ -57,8 +57,8 @@ centos:
         - yum install -y make nodejs npm
         - npm i -g yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 nixos:
@@ -72,8 +72,8 @@ nixos:
         - nix-env -iA nixos.nodejs-11_x
         - nix-env -iA nixos.yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 debian:
@@ -83,8 +83,8 @@ debian:
         - apt-get update && apt-get install -y make nodejs npm
         - npm i -g yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 ubuntu:
@@ -94,8 +94,8 @@ ubuntu:
         - apt-get update && apt-get install -y make nodejs npm
         - npm i -g yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
 
 deepin:
@@ -105,6 +105,6 @@ deepin:
         - apt-get update && apt-get install -y make nodejs npm
         - npm i -g yarn
     script:
-        - make all
-        - make test
+        - make -j8 all
+        - make -j8 test
     retry: 2
