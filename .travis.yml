@@ -36,5 +36,5 @@ matrix:
             - npm
             - yarn
 script:
-  - make -j8 all
-  - make -j8 test
+  - make all
+  - make test
