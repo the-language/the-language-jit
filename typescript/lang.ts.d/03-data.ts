@@ -65,6 +65,9 @@ type LangValJustG<a extends LangVal> = [LangValType.just_t, a, false, false]
 interface LangValJustI extends LangValJustG<LangVal> { }
 export type LangValJust = LangValJustI & LangValJustG<LangValRecHack>
 
+// exporter 为不计算，用于显示。
+// dependency 为依赖的Delay
+// exec 为计算
 type LangValDelayG<exporter extends () => [Env, LangVal], dependency extends OrFalse<LangValDelay>, exec extends () => LangVal> = [delay_t, exporter, dependency, exec]
 interface LangValDelayI extends LangValDelayG<() => [Env, LangVal], OrFalse<LangValDelay>, () => LangVal> { }
 export type LangValDelay = LangValDelayI & LangValDelayG<() => [Env, LangVal], OrFalse<any>, () => LangVal>

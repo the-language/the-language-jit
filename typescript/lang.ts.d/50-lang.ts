@@ -18,7 +18,7 @@
 */
 
 function evaluate_with_environment(env: Env, x: LangVal): LangVal {
-    throw 'WIP'
+    return new_delay((() => [env, x]), false, () => real_evaluate_with_environment(env, x))
 }
 
 function real_evaluate_with_environment(env: Env, x: LangVal): LangVal {
