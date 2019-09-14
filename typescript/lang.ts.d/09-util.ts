@@ -96,17 +96,17 @@ function force_all_ignore_comment(x: LangVal): LangVal {
 export { force_all_ignore_comment }
 
 function force_all_rec_ignore_comment(x: LangVal): LangVal {
-    x=force_all_ignore_comment(x)
-    if(null_p(x)||atom_p(x)){
+    x = force_all_ignore_comment(x)
+    if (null_p(x) || atom_p(x)) {
         return x
-    }else if(construction_p(x)){
-        return new_construction(force_all_rec_ignore_comment(construction_head(x)),force_all_rec_ignore_comment(construction_tail(x)))
-    }else if(data_p(x)){
-        return new_data_optimized(force_all_rec_ignore_comment(data_name(x)),force_all_rec_ignore_comment(data_list(x)),data_optimized(x))
+    } else if (construction_p(x)) {
+        return new_construction(force_all_rec_ignore_comment(construction_head(x)), force_all_rec_ignore_comment(construction_tail(x)))
+    } else if (data_p(x)) {
+        return new_data_optimized(force_all_rec_ignore_comment(data_name(x)), force_all_rec_ignore_comment(data_list(x)), data_optimized(x))
     }
     return LANG_ERROR()
 }
-export {force_all_rec_ignore_comment}
+export { force_all_rec_ignore_comment }
 
 function force_all(x: LangVal): [LangVal, Array<LangVal>] {
     const comments: Array<LangVal> = []
