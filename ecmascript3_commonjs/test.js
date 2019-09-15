@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
     The Language
     Copyright (C) 2018, 2019  Zaoqi <zaomir@outlook.com>
@@ -16,19 +17,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
-// ecmascript3_commonjs/lang.test.js與lua/lang.test.js內容相同
+// ecmascript3_commonjs/test.js lua/test.js 完全相同。
+const assert = require('assert').strict || require('assert')
+
 const BiwaScheme = require('@zaoqi/biwascheme')
 const TheLanguage = require('./lang.js')
 BiwaScheme.define_libfunc('test-describe', 2, 2, (ar, intp)=>{
     BiwaScheme.assert_closure(ar[1])
-    const name=BiwaScheme.to_write(ar[0])
-    const body=BiwaScheme.js_closure(ar[1], intp)
-    test(name,()=>{
-        body()
-    })
+    const name = BiwaScheme.to_write(ar[0])
+    const body = BiwaScheme.js_closure(ar[1], intp)
+    console.log(`[TEST Block Begin] ${name}`)
+    body()
+    console.log(`[TEST Block End] ${name}`)
 })
 BiwaScheme.define_libfunc('test-check-equal?', 2, 2, (ar)=>{
-    expect(BiwaScheme.equal(ar[0],ar[1])).toBe(true)
+    assert.equal(BiwaScheme.equal(ar[0],ar[1]), true)
 })
 for(const [k, a, v] of [
     ['complex-parse', 1, TheLanguage.complex_parse],
