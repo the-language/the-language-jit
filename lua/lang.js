@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
-const assert = require('assert').strict
+const assert = require('assert').strict || require('assert')
 const {luaconf, lua, lauxlib, lualib} = require('fengari')
 const fengari = require('fengari')
 const lua_interop = require('fengari-interop')
