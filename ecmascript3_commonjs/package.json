@@ -4,7 +4,7 @@
     "typescript": "^3.6.3"
   },
   "scripts": {
-    "test": "./test.js"
+    "test": "node ./test.js"
   },
   "name": "the-language-jit",
   "version": "0.0.0",
