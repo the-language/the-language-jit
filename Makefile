@@ -7,14 +7,14 @@ clean:
 	rm -fr $(ALL) */node_modules
 .PHONY: clean
 
-test: all test_ecmascript3 test_lua
+test: test_ecmascript3 test_lua
 .PHONY: test
 
-test_ecmascript3: all ecmascript3_commonjs/node_modules
+test_ecmascript3: ecmascript3_commonjs/node_modules
 	cd ecmascript3_commonjs && yarn test
 .PHONY: test_ecmascript3
 
-test_lua: all lua/node_modules
+test_lua: lua/node_modules
 	cd lua && yarn test
 .PHONY: test_lua
 

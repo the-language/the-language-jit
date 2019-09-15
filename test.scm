@@ -55,7 +55,7 @@
         (lambda (x) (writeln-and-eval `(test-check-equal? (machinetext-print (machinetext-parse ,x)) ,x)))
         '("_"
           "#^符名^.^太始初核^.._^一類何物^...^化滅^.._..^一類何物^.^列序^_^省略一物^_^構物^.^省略一物^_"))))
-(test-describe '(evaluate-with-environment force-all-rec-ignore-comment)
+(test-describe '(evaluate-with-environment force-all-rec-ignore-comment complex-parse complex-print)
     (lambda () (for-each
-        (lambda (x) (writeln-and-eval `(test-check-equal? (force-all-rec-ignore-comment (evaluate-with-environment environment-null-v ,(car x))) ,(cadr x))))
-        '((null-v null-v)))))
+        (lambda (x) (writeln-and-eval `(test-check-equal? (complex-print (force-all-rec-ignore-comment (evaluate-with-environment (value->environment (complex-parse ,(car x))) (complex-parse ,(cadr x))))) ,(caddr x))))
+        '(("#(映表 ())" "()" "()")))))

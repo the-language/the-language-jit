@@ -41,11 +41,12 @@ for(const [k, a, v] of [
     ['machinetext-print', 1, TheLanguage.machinetext_print],
     ['evaluate-with-environment', 2, TheLanguage.evaluate_with_environment],
     ['force-all-rec-ignore-comment', 1, TheLanguage.force_all_rec_ignore_comment],
+    ['environment->value', 1, TheLanguage.env2val],
+    ['value->environment', 1, TheLanguage.val2env],
 ]){
     BiwaScheme.define_libfunc(k, a, a, (ar)=>v.apply(null, ar))
 }
 for(const [k, v] of [
-    ['null-v', TheLanguage.null_v],
     ['environment-null-v', TheLanguage.env_null_v],
 ]){
     BiwaScheme.TopEnv[k] = v
