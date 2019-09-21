@@ -1,5 +1,6 @@
 # TheLanguage JIT
 
+[![actions build status](https://github.com/the-language/the-language-jit/workflows/CI/badge.svg)](https://github.com/the-language/the-language-jit/commits/master)
 [![travis-ci.org build status](https://api.travis-ci.org/the-language/the-language-jit.svg?branch=master)](https://travis-ci.org/the-language/the-language-jit)
 [![pipeline status](https://gitlab.com/the-language/the-language-jit/badges/master/pipeline.svg)](https://gitlab.com/the-language/the-language-jit/commits/master)
 

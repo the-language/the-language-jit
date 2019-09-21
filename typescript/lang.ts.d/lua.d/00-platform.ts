@@ -72,16 +72,16 @@ function thislang_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
     return `${f}(${reduce_comma(args)})`
 }
 function thislang_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
-    return `(function()if ${cond} then return ${then} else return ${elsev} end end)()`
+    return `(function()if ${cond} then\nreturn ${then}\nelse\nreturn ${elsev}\nend\nend)()`
 }
 function thislang_statement_call(f: ThisLang, args: Array<ThisLang>): ThisLang {
     return `${f}(${reduce_comma(args)})`
 }
 function thislang_statement_if(cond: ThisLang, then: ThisLang, elsev: ThisLang): ThisLang {
-    return `if ${cond} then ${then} else ${elsev} end`
+    return `if ${cond} then\n${then}\nelse\n${elsev}\nend\n`
 }
 function thislang_lambda(args: Array<ThisLang>, statements: ThisLang): ThisLang {
-    return `(function(${reduce_comma(args)}) ${statements} end)`
+    return `(function(${reduce_comma(args)})${statements}\nend)`
 }
 
 function thislang_concat_statements(statements: Array<ThisLang>): ThisLang {
@@ -89,14 +89,14 @@ function thislang_concat_statements(statements: Array<ThisLang>): ThisLang {
 }
 
 function thislang_statement_var(id: ThisLang): ThisLang {
-    return `local ${id}=nil`
+    return `local ${id}=nil\n`
 }
 function thislang_statement_var_init(id: ThisLang, val: ThisLang): ThisLang {
-    return `local ${id}=${val}`
+    return `local ${id}=${val}\n`
 }
 function thislang_statement_assign(id: ThisLang, val: ThisLang): ThisLang {
-    return `${id}=${val}`
+    return `${id}=${val}\n`
 }
 function thislang_statement_return(val: ThisLang): ThisLang {
-    return `return ${val}`
+    return `return ${val}\n`
 }
