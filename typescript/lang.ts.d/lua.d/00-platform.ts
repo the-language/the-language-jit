@@ -38,7 +38,7 @@ function thislang_eval_expression(expression: ThisLang): any {
 }
 
 function thislang_gensym(state: Nat): ThisLang {
-    return `v${state.toString(36)}`
+    return `v${state.toString()}`
 }
 function thislang_id(x: string): ThisLang {
     let r = ''
@@ -47,7 +47,7 @@ function thislang_id(x: string): ThisLang {
         if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')) {
             r += c
         } else {
-            r += `_${c.charCodeAt(0).toString(36)}_`
+            r += `_${c.charCodeAt(0).toString()}_`
         }
     }
     return r
